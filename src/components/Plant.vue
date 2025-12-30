@@ -14,15 +14,15 @@
       <!-- Reusable insect definitions -->
       <defs>
         <g id="bee">
-          <circle r="2.5" fill="#FFD700" class="animate-pulse"/>
-          <circle r="1.2" fill="#FFA500" class="animate-pulse"/>
+          <circle r="5" fill="#FFD700" class="animate-pulse"/>
+          <circle r="2.4" fill="#FFA500" class="animate-pulse"/>
         </g>
         <g id="fly">
-          <circle r="2" fill="#666" opacity="0.7"/>
+          <circle r="4" fill="#666" opacity="0.7"/>
         </g>
         <g id="butterfly">
-          <path d="M-4 0 Q-2 -4 0 0 Q2 -4 4 0" stroke="#FF6B6B" stroke-width="2" fill="none"/>
-          <path d="M-4 0 Q-2 2 0 0 Q2 2 4 0" stroke="#FF6B6B" stroke-width="2" fill="none"/>
+          <path d="M-8 0 Q-4 -8 0 0 Q4 -8 8 0" stroke="#FF6B6B" stroke-width="4" fill="none"/>
+          <path d="M-8 0 Q-4 4 0 0 Q4 4 8 0" stroke="#FF6B6B" stroke-width="4" fill="none"/>
         </g>
       </defs>
       <!-- Grass (tiny projects) -->
@@ -139,10 +139,10 @@ const plantType = computed(() => {
 // Plant dimensions based on repo stats and type
 const commitCount = computed(() => Math.max(1, Math.min(50, props.repo.size || 1)))
 const plantHeight = computed(() => {
-  const base = { grass: 40, shrub: 60, tree: 80, oak: 100 }
-  return base[plantType.value] || 60
+  const base = { grass: 60, shrub: 90, tree: 120, oak: 150 }
+  return base[plantType.value] || 90
 })
-const plantSize = computed(() => 60)
+const plantSize = computed(() => 90)
 const stemHeight = computed(() => {
   const multiplier = { grass: 0.3, shrub: 0.5, tree: 0.7, oak: 0.9 }
   return Math.max(15, commitCount.value * (multiplier[plantType.value] || 0.5))
