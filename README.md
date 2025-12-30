@@ -19,6 +19,7 @@ A fun, nature-themed visualization of your GitHub activity! Watch your repositor
   - Flower color = programming language
   - Bloom size = star count
 - **Interactive**: Hover tooltips with detailed repo information
+- **Garden Key**: Visual legend explaining plant types and ecosystem elements
 - **Themes**: Light and dark garden modes
 - **Animations**: Plants grow and sway naturally
 - **Export Ready**: Built-in garden export functionality
