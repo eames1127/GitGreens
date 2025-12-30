@@ -45,6 +45,11 @@
       :loading="loading"
       @export="exportGarden"
     />
+
+    <!-- Garden Key -->
+    <div v-if="repos.length > 0" class="max-w-2xl mx-auto mt-6">
+      <GardenKey />
+    </div>
   </div>
 </template>
 
@@ -52,6 +57,7 @@
 import { ref, inject } from 'vue'
 import { toPng } from 'html-to-image'
 import GardenCanvas from './GardenCanvas.vue'
+import GardenKey from './GardenKey.vue'
 import { useGitHub } from '../composables/useGitHub'
 
 const { isDark, toggleTheme } = inject('theme')
