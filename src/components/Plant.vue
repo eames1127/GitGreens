@@ -112,46 +112,33 @@
 import { ref, computed } from 'vue'
 
 const props = defineProps({
-  repo: Object,
-  delay: Number
+  repo: {
+    type: Object,
+    required: true
+  },
+  delay: {
+    type: Number,
+    default: 0
+  }
 })
 
 const showTooltip = ref(false)
 
-// Ecosystem indicators
-const hasRecentActivity = computed(() => {
-  const pushed = new Date(props.repo.pushed_at || props.repo.updated_at)
-  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  return pushed > weekAgo
-})
+// Constants
+const PLANT_THRESHOLDS = {
+  GRASS: 100000,    // < 100MB
+  SHRUB: 500000,    // 100MB - 500MB  
+  TREE: 1000000     // 500MB - 1GB, > 1GB = oak
+}
 
-const hasOpenIssues = computed(() => props.repo.open_issues_count > 0)
-const isPopular = computed(() => props.repo.stargazers_count > 10)
+const PLANT_DIMENSIONS = {
+  grass: { height: 60, multiplier: 0.3 },
+  shrub: { height: 90, multiplier: 0.5 },
+  tree: { height: 120, multiplier: 0.7 },
+  oak: { height: 150, multiplier: 0.9 }
+}
 
-// Plant type based on project size (KB)
-const plantType = computed(() => {
-  const size = props.repo.size || 0
-  if (size < 100000) return 'grass'    // < 100MB
-  if (size < 500000) return 'shrub'    // 100MB - 500MB  
-  if (size < 1000000) return 'tree'    // 500MB - 1GB
-  return 'oak'                         // > 1GB
-})
-
-// Plant dimensions based on repo stats and type
-const commitCount = computed(() => Math.max(1, Math.min(50, props.repo.size || 1)))
-const plantHeight = computed(() => {
-  const base = { grass: 60, shrub: 90, tree: 120, oak: 150 }
-  return base[plantType.value] || 90
-})
-const plantSize = computed(() => 90)
-const stemHeight = computed(() => {
-  const multiplier = { grass: 0.3, shrub: 0.5, tree: 0.7, oak: 0.9 }
-  return Math.max(15, commitCount.value * (multiplier[plantType.value] || 0.5))
-})
-const bloomSize = computed(() => Math.max(0, Math.min(12, props.repo.stargazers_count * 0.5)))
-
-// Colors based on programming language
-const languageColors = {
+const LANGUAGE_COLORS = {
   JavaScript: '#f1e05a',
   TypeScript: '#2b7489',
   Python: '#3572A5',
@@ -172,15 +159,56 @@ const languageColors = {
   CSS: '#1572B6'
 }
 
+// Ecosystem indicators
+const hasRecentActivity = computed(() => {
+  const pushed = new Date(props.repo.pushed_at || props.repo.updated_at)
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  return pushed > weekAgo
+})
+
+const hasOpenIssues = computed(() => props.repo.open_issues_count > 0)
+const isPopular = computed(() => props.repo.stargazers_count >= 10)
+
+// Plant type based on project size (KB)
+const plantType = computed(() => {
+  const size = props.repo.size || 0
+  if (size < PLANT_THRESHOLDS.GRASS) return 'grass'
+  if (size < PLANT_THRESHOLDS.SHRUB) return 'shrub'
+  if (size < PLANT_THRESHOLDS.TREE) return 'tree'
+  return 'oak'
+})
+
+// Plant dimensions based on repo stats and type
+const commitCount = computed(() => 
+  Math.max(1, Math.min(50, props.repo.size || 1))
+)
+
+const plantHeight = computed(() => 
+  PLANT_DIMENSIONS[plantType.value]?.height || 90
+)
+
+const plantSize = computed(() => 90)
+
+const stemHeight = computed(() => {
+  const multiplier = PLANT_DIMENSIONS[plantType.value]?.multiplier || 0.5
+  return Math.max(15, commitCount.value * multiplier)
+})
+
+const bloomSize = computed(() => 
+  Math.max(0, Math.min(12, props.repo.stargazers_count * 0.5))
+)
+
+// Colors
 const stemColor = computed(() => '#228B22')
 const leafColor = computed(() => '#32CD32')
 const bloomColor = computed(() => 
-  languageColors[props.repo.language] || '#FF69B4'
+  LANGUAGE_COLORS[props.repo.language] || '#FF69B4'
 )
 
-// Format date for tooltip
+// Utility functions
 const formatDate = (dateStr) => {
   if (!dateStr) return 'Never'
+  
   const date = new Date(dateStr)
   const now = new Date()
   const diffMs = now - date
@@ -191,6 +219,7 @@ const formatDate = (dateStr) => {
   if (diffDays < 7) return `${diffDays} days ago`
   return date.toLocaleDateString()
 }
+</script>
 </script>
 
 <style scoped>
