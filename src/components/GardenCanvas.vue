@@ -18,8 +18,16 @@
     <!-- Garden Grid -->
     <div 
       ref="gardenRef"
-      class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 p-6 bg-garden-soil dark:bg-garden-dark-soil rounded-xl border-4 border-garden-grass dark:border-garden-dark-grass"
+      class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 p-6 bg-garden-soil dark:bg-garden-dark-soil rounded-xl border-4 border-garden-grass dark:border-garden-dark-grass min-h-[200px] relative"
     >
+      <!-- Loading animation -->
+      <div v-if="loading" class="absolute inset-0 flex items-center justify-center">
+        <div class="text-white text-center">
+          <div class="text-4xl mb-2 animate-bounce">🌱</div>
+          <p class="text-sm opacity-80">Growing your garden...</p>
+        </div>
+      </div>
+      
       <Plant
         v-for="(repo, index) in repos"
         :key="repo.id"

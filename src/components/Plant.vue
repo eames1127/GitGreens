@@ -1,6 +1,7 @@
 <template>
   <div 
-    class="relative group cursor-pointer plant-sway"
+    class="relative group cursor-pointer plant-sway opacity-0 animate-grow"
+    :style="{ animationDelay: `${delay}ms` }"
     @mouseenter="showTooltip = true"
     @mouseleave="showTooltip = false"
   >
@@ -33,9 +34,9 @@
         <circle v-if="bloomSize > 0" cx="30" cy="65" :r="bloomSize" :fill="bloomColor"/>
         
         <!-- Insects for grass -->
-        <use v-if="hasRecentActivity" href="#bee" transform="translate(35,60)"/>
-        <use v-if="hasOpenIssues" href="#fly" transform="translate(27,68)"/>
-        <use v-if="isPopular" href="#butterfly" transform="translate(25,62)"/>
+        <use v-if="hasRecentActivity" href="#bee" x="35" y="82" class="animate-bee"/>
+        <use v-if="hasOpenIssues" href="#fly" x="27" y="85" class="animate-fly"/>
+        <use v-if="isPopular" href="#butterfly" x="25" y="80" class="animate-butterfly"/>
       </template>
 
       <!-- Shrub (small projects) -->
@@ -46,9 +47,9 @@
         <circle v-if="bloomSize > 0" cx="30" cy="60" :r="bloomSize" :fill="bloomColor"/>
         
         <!-- Insects for shrubs -->
-        <use v-if="hasRecentActivity" href="#bee" transform="translate(22,72)"/>
-        <use v-if="hasOpenIssues" href="#fly" transform="translate(38,77)"/>
-        <use v-if="isPopular" href="#butterfly" transform="translate(18,65)"/>
+        <use v-if="hasRecentActivity" href="#bee" transform="translate(22,72)" class="animate-bee"/>
+        <use v-if="hasOpenIssues" href="#fly" transform="translate(38,77)" class="animate-fly"/>
+        <use v-if="isPopular" href="#butterfly" transform="translate(18,65)" class="animate-butterfly"/>
       </template>
 
       <!-- Tree (medium projects) -->
@@ -60,9 +61,9 @@
         <circle v-if="bloomSize > 0" cx="35" cy="50" :r="bloomSize * 0.7" :fill="bloomColor"/>
         
         <!-- Insects for trees -->
-        <use v-if="hasRecentActivity" href="#bee" transform="translate(23,48)"/>
-        <use v-if="hasOpenIssues" href="#fly" transform="translate(37,53)"/>
-        <use v-if="isPopular" href="#butterfly" transform="translate(17,42)"/>
+        <use v-if="hasRecentActivity" href="#bee" transform="translate(23,48)" class="animate-bee"/>
+        <use v-if="hasOpenIssues" href="#fly" transform="translate(37,53)" class="animate-fly"/>
+        <use v-if="isPopular" href="#butterfly" transform="translate(17,42)" class="animate-butterfly"/>
       </template>
 
       <!-- Oak Tree (large projects) -->
@@ -76,11 +77,11 @@
         <circle v-if="bloomSize > 0" cx="40" cy="35" :r="bloomSize * 0.6" :fill="bloomColor"/>
         
         <!-- Ecosystem for oak trees -->
-        <use v-if="hasRecentActivity" href="#bee" transform="translate(18,38)"/>
-        <use v-if="hasRecentActivity" href="#bee" transform="translate(42,32)"/>
-        <use v-if="hasOpenIssues" href="#fly" transform="translate(32,40)"/>
-        <use v-if="isPopular" href="#butterfly" transform="translate(15,30)"/>
-        <use v-if="isPopular" href="#butterfly" transform="translate(45,28)"/>
+        <use v-if="hasRecentActivity" href="#bee" transform="translate(18,38)" class="animate-bee"/>
+        <use v-if="hasRecentActivity" href="#bee" transform="translate(42,32)" class="animate-bee"/>
+        <use v-if="hasOpenIssues" href="#fly" transform="translate(32,40)" class="animate-fly"/>
+        <use v-if="isPopular" href="#butterfly" transform="translate(15,30)" class="animate-butterfly"/>
+        <use v-if="isPopular" href="#butterfly" transform="translate(45,28)" class="animate-butterfly"/>
       </template>
     </svg>
 
@@ -191,3 +192,61 @@ const formatDate = (dateStr) => {
   return date.toLocaleDateString()
 }
 </script>
+
+<style scoped>
+@keyframes grow {
+  0% {
+    opacity: 0;
+    transform: scale(0) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(1deg); }
+}
+
+@keyframes bee-hover {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(1px, -1px); }
+  50% { transform: translate(-1px, 1px); }
+  75% { transform: translate(1px, 1px); }
+}
+
+@keyframes fly-buzz {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(0.5px, 0.5px); }
+  66% { transform: translate(-0.5px, -0.5px); }
+}
+
+@keyframes butterfly-flutter {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(2px, -1px) rotate(2deg); }
+  50% { transform: translate(-1px, -2px) rotate(-1deg); }
+  75% { transform: translate(1px, 1px) rotate(1deg); }
+}
+
+.plant-sway {
+  animation: sway 4s ease-in-out infinite;
+}
+
+.animate-grow {
+  animation: grow 0.8s ease-out forwards;
+}
+
+.animate-bee {
+  animation: bee-hover 2s ease-in-out infinite;
+}
+
+.animate-fly {
+  animation: fly-buzz 0.8s linear infinite;
+}
+
+.animate-butterfly {
+  animation: butterfly-flutter 3s ease-in-out infinite;
+}
+</style>
