@@ -220,7 +220,6 @@ const formatDate = (dateStr) => {
   return date.toLocaleDateString()
 }
 </script>
-</script>
 
 <style scoped>
 @keyframes grow {
