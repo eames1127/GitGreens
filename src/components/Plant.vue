@@ -14,11 +14,15 @@
       <!-- Reusable insect definitions -->
       <defs>
         <g id="bee">
-          <circle r="2" fill="#FFD700" class="animate-pulse"/>
-          <circle r="1" fill="#FFA500" class="animate-pulse"/>
+          <circle r="2.5" fill="#FFD700" class="animate-pulse"/>
+          <circle r="1.2" fill="#FFA500" class="animate-pulse"/>
         </g>
         <g id="fly">
-          <circle r="1.5" fill="#666" opacity="0.7"/>
+          <circle r="2" fill="#666" opacity="0.7"/>
+        </g>
+        <g id="butterfly">
+          <path d="M-4 0 Q-2 -4 0 0 Q2 -4 4 0" stroke="#FF6B6B" stroke-width="2" fill="none"/>
+          <path d="M-4 0 Q-2 2 0 0 Q2 2 4 0" stroke="#FF6B6B" stroke-width="2" fill="none"/>
         </g>
       </defs>
       <!-- Grass (tiny projects) -->
@@ -30,6 +34,8 @@
         
         <!-- Insects for grass -->
         <use v-if="hasRecentActivity" href="#bee" transform="translate(35,60)"/>
+        <use v-if="hasOpenIssues" href="#fly" transform="translate(27,68)"/>
+        <use v-if="isPopular" href="#butterfly" transform="translate(25,62)"/>
       </template>
 
       <!-- Shrub (small projects) -->
@@ -42,6 +48,7 @@
         <!-- Insects for shrubs -->
         <use v-if="hasRecentActivity" href="#bee" transform="translate(22,72)"/>
         <use v-if="hasOpenIssues" href="#fly" transform="translate(38,77)"/>
+        <use v-if="isPopular" href="#butterfly" transform="translate(18,65)"/>
       </template>
 
       <!-- Tree (medium projects) -->
@@ -55,6 +62,7 @@
         <!-- Insects for trees -->
         <use v-if="hasRecentActivity" href="#bee" transform="translate(23,48)"/>
         <use v-if="hasOpenIssues" href="#fly" transform="translate(37,53)"/>
+        <use v-if="isPopular" href="#butterfly" transform="translate(17,42)"/>
       </template>
 
       <!-- Oak Tree (large projects) -->
@@ -71,7 +79,8 @@
         <use v-if="hasRecentActivity" href="#bee" transform="translate(18,38)"/>
         <use v-if="hasRecentActivity" href="#bee" transform="translate(42,32)"/>
         <use v-if="hasOpenIssues" href="#fly" transform="translate(32,40)"/>
-        <path v-if="isPopular" d="M15 30 Q17 28 19 30" stroke="#FF6B6B" stroke-width="0.8" fill="none"/>
+        <use v-if="isPopular" href="#butterfly" transform="translate(15,30)"/>
+        <use v-if="isPopular" href="#butterfly" transform="translate(45,28)"/>
       </template>
     </svg>
 
