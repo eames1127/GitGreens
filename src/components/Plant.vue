@@ -11,12 +11,25 @@
       viewBox="0 0 60 100" 
       class="mx-auto"
     >
+      <!-- Reusable insect definitions -->
+      <defs>
+        <g id="bee">
+          <circle r="2" fill="#FFD700" class="animate-pulse"/>
+          <circle r="1" fill="#FFA500" class="animate-pulse"/>
+        </g>
+        <g id="fly">
+          <circle r="1.5" fill="#666" opacity="0.7"/>
+        </g>
+      </defs>
       <!-- Grass (tiny projects) -->
       <template v-if="plantType === 'grass'">
         <path d="M25 90 Q27 80 25 70" stroke="#32CD32" stroke-width="2" fill="none"/>
         <path d="M30 90 Q32 75 30 65" stroke="#228B22" stroke-width="2" fill="none"/>
         <path d="M35 90 Q37 82 35 72" stroke="#32CD32" stroke-width="2" fill="none"/>
         <circle v-if="bloomSize > 0" cx="30" cy="65" :r="bloomSize" :fill="bloomColor"/>
+        
+        <!-- Insects for grass -->
+        <use v-if="hasRecentActivity" href="#bee" transform="translate(35,60)"/>
       </template>
 
       <!-- Shrub (small projects) -->
@@ -25,6 +38,10 @@
         <ellipse cx="20" cy="75" rx="8" ry="4" :fill="leafColor" transform="rotate(-30 20 75)"/>
         <ellipse cx="40" cy="80" rx="6" ry="3" :fill="leafColor" transform="rotate(30 40 80)"/>
         <circle v-if="bloomSize > 0" cx="30" cy="60" :r="bloomSize" :fill="bloomColor"/>
+        
+        <!-- Insects for shrubs -->
+        <use v-if="hasRecentActivity" href="#bee" transform="translate(22,72)"/>
+        <use v-if="hasOpenIssues" href="#fly" transform="translate(38,77)"/>
       </template>
 
       <!-- Tree (medium projects) -->
@@ -34,6 +51,10 @@
         <path d="M22 60 Q30 50 38 60 Q33 55 30 55 Q27 55 22 60" :fill="leafColor"/>
         <circle v-if="bloomSize > 0" cx="25" cy="45" :r="bloomSize * 0.7" :fill="bloomColor"/>
         <circle v-if="bloomSize > 0" cx="35" cy="50" :r="bloomSize * 0.7" :fill="bloomColor"/>
+        
+        <!-- Insects for trees -->
+        <use v-if="hasRecentActivity" href="#bee" transform="translate(23,48)"/>
+        <use v-if="hasOpenIssues" href="#fly" transform="translate(37,53)"/>
       </template>
 
       <!-- Oak Tree (large projects) -->
@@ -45,6 +66,12 @@
         <circle v-if="bloomSize > 0" cx="20" cy="35" :r="bloomSize * 0.6" :fill="bloomColor"/>
         <circle v-if="bloomSize > 0" cx="30" cy="30" :r="bloomSize * 0.6" :fill="bloomColor"/>
         <circle v-if="bloomSize > 0" cx="40" cy="35" :r="bloomSize * 0.6" :fill="bloomColor"/>
+        
+        <!-- Ecosystem for oak trees -->
+        <use v-if="hasRecentActivity" href="#bee" transform="translate(18,38)"/>
+        <use v-if="hasRecentActivity" href="#bee" transform="translate(42,32)"/>
+        <use v-if="hasOpenIssues" href="#fly" transform="translate(32,40)"/>
+        <path v-if="isPopular" d="M15 30 Q17 28 19 30" stroke="#FF6B6B" stroke-width="0.8" fill="none"/>
       </template>
     </svg>
 
@@ -58,6 +85,13 @@
         ⭐ {{ repo.stargazers_count }} • 
         🔧 {{ repo.language || 'Unknown' }} • 
         📏 {{ repo.size }}KB ({{ plantType }})
+      </div>
+      <div class="text-xs opacity-60">
+        📅 Last push: {{ formatDate(repo.pushed_at) }}
+      </div>
+      <div class="text-xs opacity-60">
+        🐝 Active: {{ hasRecentActivity ? 'Yes' : 'No' }} • 
+        🪰 Issues: {{ repo.open_issues_count }}
       </div>
       <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-black/80"></div>
     </div>
@@ -73,6 +107,16 @@ const props = defineProps({
 })
 
 const showTooltip = ref(false)
+
+// Ecosystem indicators
+const hasRecentActivity = computed(() => {
+  const pushed = new Date(props.repo.pushed_at || props.repo.updated_at)
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  return pushed > weekAgo
+})
+
+const hasOpenIssues = computed(() => props.repo.open_issues_count > 0)
+const isPopular = computed(() => props.repo.stargazers_count > 10)
 
 // Plant type based on project size (KB)
 const plantType = computed(() => {
@@ -123,4 +167,18 @@ const leafColor = computed(() => '#32CD32')
 const bloomColor = computed(() => 
   languageColors[props.repo.language] || '#FF69B4'
 )
+
+// Format date for tooltip
+const formatDate = (dateStr) => {
+  if (!dateStr) return 'Never'
+  const date = new Date(dateStr)
+  const now = new Date()
+  const diffMs = now - date
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  
+  if (diffDays === 0) return 'Today'
+  if (diffDays === 1) return 'Yesterday'
+  if (diffDays < 7) return `${diffDays} days ago`
+  return date.toLocaleDateString()
+}
 </script>
