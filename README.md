@@ -4,12 +4,21 @@ A fun, nature-themed visualization of your GitHub activity! Watch your repositor
 
 ## ✨ Features
 
-- **Living Garden**: Each repository becomes a stylized SVG plant
+- **Living Garden**: Each repository becomes a stylized SVG plant based on project size
+- **Plant Evolution**: 
+  - **Grass** (< 100MB): Simple grass tufts for tiny projects
+  - **Shrubs** (100MB - 500MB): Bushy plants for small-medium projects
+  - **Trees** (500MB - 1GB): Branched trees for large projects
+  - **Oak Trees** (> 1GB): Majestic oaks for massive codebases
+- **Living Ecosystem**: 
+  - 🐝 **Bees** (pulsing golden) = Recent activity (pushed in last 7 days)
+  - 🪰 **Flies** (gray) = Open issues needing attention
+  - 🦋 **Butterflies** (red) = Popular repositories (10+ stars)
 - **Smart Visualization**: 
-  - Plant height = commit activity (repo size)
+  - Plant height = repository size and activity
   - Flower color = programming language
   - Bloom size = star count
-- **Interactive**: Hover tooltips with repo details
+- **Interactive**: Hover tooltips with detailed repo information
 - **Themes**: Light and dark garden modes
 - **Animations**: Plants grow and sway naturally
 - **Export Ready**: Built-in garden export functionality
@@ -59,30 +68,61 @@ GitGreens/
 1. **Enter Username**: Type any GitHub username
 2. **Fetch Data**: Pulls public repositories via GitHub REST API
 3. **Generate Garden**: Each repo becomes a plant with:
-   - Stem height based on commit activity
-   - Leaf color for vitality
-   - Flower color matching the main programming language
-   - Bloom size reflecting star count
+   - **Plant Type**: Determined by repository size (grass → shrub → tree → oak)
+   - **Stem Height**: Based on repository activity and size
+   - **Flower Color**: Matches the main programming language
+   - **Bloom Size**: Reflects star count popularity
+   - **Ecosystem**: Living insects show project health and activity
 4. **Enjoy**: Watch your garden grow with smooth animations!
 
-## 🌿 Plant Mapping
+## 🌿 Garden Ecosystem
+
+| Element | Meaning | Trigger |
+|---------|---------|----------|
+| 🐝 **Bees** | Active Development | Repository pushed to in last 7 days |
+| 🪰 **Flies** | Issues Need Attention | Open issues count > 0 |
+| 🦋 **Butterflies** | Community Love | Star count ≥ 10 |
+| 🌱 **Grass** | Tiny Projects | Repository size < 100MB |
+| 🌿 **Shrubs** | Small Projects | Repository size 100MB - 500MB |
+| 🌳 **Trees** | Large Projects | Repository size 500MB - 1GB |
+| 🌲 **Oak Trees** | Massive Projects | Repository size > 1GB |
+
+## 🎨 Plant Mapping
 
 | Repo Attribute | Plant Feature | Visual Effect |
 |----------------|---------------|---------------|
-| Commit Count   | Stem Height   | Taller = more active |
-| Language       | Flower Color  | JavaScript = yellow, Python = blue, etc. |
-| Stars          | Bloom Size    | Bigger blooms = more popular |
-| Activity       | Animation     | Recent activity = more sway |
+| Repository Size | Plant Type | Grass → Shrub → Tree → Oak |
+| Recent Activity | Bees (Pulsing) | Golden bees for active repos |
+| Open Issues | Flies | Gray flies indicate maintenance needed |
+| Star Count | Butterflies + Bloom Size | Red butterflies for popular repos |
+| Language | Flower Color | JavaScript = yellow, Python = blue, etc. |
+| Activity Level | Animation | Recent activity = more sway |
 
-## 🎯 Next Phase Ideas
+## 🎯 Future Enhancements
 
+### 🌍 Ecosystem Expansion
+- **Ground Cover Elements**:
+  - README quality = grass health and density
+  - Documentation coverage = flower bed richness
+  - Test coverage = beneficial mushrooms
+  - CI/CD status = garden irrigation systems
+
+### 🎨 Visual Improvements
 - **Seasonal Themes**: Spring blooms, autumn colors, winter frost
-- **Garden Leaderboards**: Compare gardens with friends
-- **Time-lapse Mode**: Watch garden evolution over time
-- **Custom Plant Types**: Trees for old repos, flowers for new ones
 - **Weather Effects**: Rain for active days, sunshine for stars
-- **Garden Sharing**: Social media integration
-- **Advanced Metrics**: Pull requests as butterflies, issues as weeds
+- **Time-lapse Mode**: Watch garden evolution over time
+- **Advanced Plant Types**: Fruit trees for mature repos, cacti for archived ones
+
+### 🚀 Social Features
+- **Garden Leaderboards**: Compare gardens with friends
+- **Garden Sharing**: Social media integration with garden snapshots
+- **Collaborative Gardens**: Team/organization garden views
+
+### 📊 Advanced Metrics
+- **Pull Requests**: Represented as visiting birds or pollinators
+- **Contributors**: Show as garden visitors or helper animals
+- **Commit Frequency**: Seasonal growth patterns
+- **Repository Health**: Overall garden vitality scoring
 
 ## 🛠️ Tech Stack
 
