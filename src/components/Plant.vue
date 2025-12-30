@@ -1,6 +1,7 @@
 <template>
   <div 
-    class="relative group cursor-pointer plant-sway"
+    class="relative group cursor-pointer plant-sway opacity-0 animate-grow"
+    :style="{ animationDelay: `${delay}ms` }"
     @mouseenter="showTooltip = true"
     @mouseleave="showTooltip = false"
   >
@@ -33,9 +34,9 @@
         <circle v-if="bloomSize > 0" cx="30" cy="65" :r="bloomSize" :fill="bloomColor"/>
         
         <!-- Insects for grass -->
-        <use v-if="hasRecentActivity" href="#bee" transform="translate(35,60)"/>
-        <use v-if="hasOpenIssues" href="#fly" transform="translate(27,68)"/>
-        <use v-if="isPopular" href="#butterfly" transform="translate(25,62)"/>
+        <use v-if="hasRecentActivity" href="#bee" x="35" y="82" class="animate-bee"/>
+        <use v-if="hasOpenIssues" href="#fly" x="27" y="85" class="animate-fly"/>
+        <use v-if="isPopular" href="#butterfly" x="25" y="80" class="animate-butterfly"/>
       </template>
 
       <!-- Shrub (small projects) -->
@@ -46,9 +47,9 @@
         <circle v-if="bloomSize > 0" cx="30" cy="60" :r="bloomSize" :fill="bloomColor"/>
         
         <!-- Insects for shrubs -->
-        <use v-if="hasRecentActivity" href="#bee" transform="translate(22,72)"/>
-        <use v-if="hasOpenIssues" href="#fly" transform="translate(38,77)"/>
-        <use v-if="isPopular" href="#butterfly" transform="translate(18,65)"/>
+        <use v-if="hasRecentActivity" href="#bee" transform="translate(22,72)" class="animate-bee"/>
+        <use v-if="hasOpenIssues" href="#fly" transform="translate(38,77)" class="animate-fly"/>
+        <use v-if="isPopular" href="#butterfly" transform="translate(18,65)" class="animate-butterfly"/>
       </template>
 
       <!-- Tree (medium projects) -->
@@ -60,9 +61,9 @@
         <circle v-if="bloomSize > 0" cx="35" cy="50" :r="bloomSize * 0.7" :fill="bloomColor"/>
         
         <!-- Insects for trees -->
-        <use v-if="hasRecentActivity" href="#bee" transform="translate(23,48)"/>
-        <use v-if="hasOpenIssues" href="#fly" transform="translate(37,53)"/>
-        <use v-if="isPopular" href="#butterfly" transform="translate(17,42)"/>
+        <use v-if="hasRecentActivity" href="#bee" transform="translate(23,48)" class="animate-bee"/>
+        <use v-if="hasOpenIssues" href="#fly" transform="translate(37,53)" class="animate-fly"/>
+        <use v-if="isPopular" href="#butterfly" transform="translate(17,42)" class="animate-butterfly"/>
       </template>
 
       <!-- Oak Tree (large projects) -->
@@ -76,11 +77,11 @@
         <circle v-if="bloomSize > 0" cx="40" cy="35" :r="bloomSize * 0.6" :fill="bloomColor"/>
         
         <!-- Ecosystem for oak trees -->
-        <use v-if="hasRecentActivity" href="#bee" transform="translate(18,38)"/>
-        <use v-if="hasRecentActivity" href="#bee" transform="translate(42,32)"/>
-        <use v-if="hasOpenIssues" href="#fly" transform="translate(32,40)"/>
-        <use v-if="isPopular" href="#butterfly" transform="translate(15,30)"/>
-        <use v-if="isPopular" href="#butterfly" transform="translate(45,28)"/>
+        <use v-if="hasRecentActivity" href="#bee" transform="translate(18,38)" class="animate-bee"/>
+        <use v-if="hasRecentActivity" href="#bee" transform="translate(42,32)" class="animate-bee"/>
+        <use v-if="hasOpenIssues" href="#fly" transform="translate(32,40)" class="animate-fly"/>
+        <use v-if="isPopular" href="#butterfly" transform="translate(15,30)" class="animate-butterfly"/>
+        <use v-if="isPopular" href="#butterfly" transform="translate(45,28)" class="animate-butterfly"/>
       </template>
     </svg>
 
@@ -111,46 +112,33 @@
 import { ref, computed } from 'vue'
 
 const props = defineProps({
-  repo: Object,
-  delay: Number
+  repo: {
+    type: Object,
+    required: true
+  },
+  delay: {
+    type: Number,
+    default: 0
+  }
 })
 
 const showTooltip = ref(false)
 
-// Ecosystem indicators
-const hasRecentActivity = computed(() => {
-  const pushed = new Date(props.repo.pushed_at || props.repo.updated_at)
-  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  return pushed > weekAgo
-})
+// Constants
+const PLANT_THRESHOLDS = {
+  GRASS: 100000,    // < 100MB
+  SHRUB: 500000,    // 100MB - 500MB  
+  TREE: 1000000     // 500MB - 1GB, > 1GB = oak
+}
 
-const hasOpenIssues = computed(() => props.repo.open_issues_count > 0)
-const isPopular = computed(() => props.repo.stargazers_count > 10)
+const PLANT_DIMENSIONS = {
+  grass: { height: 60, multiplier: 0.3 },
+  shrub: { height: 90, multiplier: 0.5 },
+  tree: { height: 120, multiplier: 0.7 },
+  oak: { height: 150, multiplier: 0.9 }
+}
 
-// Plant type based on project size (KB)
-const plantType = computed(() => {
-  const size = props.repo.size || 0
-  if (size < 100000) return 'grass'    // < 100MB
-  if (size < 500000) return 'shrub'    // 100MB - 500MB  
-  if (size < 1000000) return 'tree'    // 500MB - 1GB
-  return 'oak'                         // > 1GB
-})
-
-// Plant dimensions based on repo stats and type
-const commitCount = computed(() => Math.max(1, Math.min(50, props.repo.size || 1)))
-const plantHeight = computed(() => {
-  const base = { grass: 60, shrub: 90, tree: 120, oak: 150 }
-  return base[plantType.value] || 90
-})
-const plantSize = computed(() => 90)
-const stemHeight = computed(() => {
-  const multiplier = { grass: 0.3, shrub: 0.5, tree: 0.7, oak: 0.9 }
-  return Math.max(15, commitCount.value * (multiplier[plantType.value] || 0.5))
-})
-const bloomSize = computed(() => Math.max(0, Math.min(12, props.repo.stargazers_count * 0.5)))
-
-// Colors based on programming language
-const languageColors = {
+const LANGUAGE_COLORS = {
   JavaScript: '#f1e05a',
   TypeScript: '#2b7489',
   Python: '#3572A5',
@@ -171,15 +159,56 @@ const languageColors = {
   CSS: '#1572B6'
 }
 
+// Ecosystem indicators
+const hasRecentActivity = computed(() => {
+  const pushed = new Date(props.repo.pushed_at || props.repo.updated_at)
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  return pushed > weekAgo
+})
+
+const hasOpenIssues = computed(() => props.repo.open_issues_count > 0)
+const isPopular = computed(() => props.repo.stargazers_count >= 10)
+
+// Plant type based on project size (KB)
+const plantType = computed(() => {
+  const size = props.repo.size || 0
+  if (size < PLANT_THRESHOLDS.GRASS) return 'grass'
+  if (size < PLANT_THRESHOLDS.SHRUB) return 'shrub'
+  if (size < PLANT_THRESHOLDS.TREE) return 'tree'
+  return 'oak'
+})
+
+// Plant dimensions based on repo stats and type
+const commitCount = computed(() => 
+  Math.max(1, Math.min(50, props.repo.size || 1))
+)
+
+const plantHeight = computed(() => 
+  PLANT_DIMENSIONS[plantType.value]?.height || 90
+)
+
+const plantSize = computed(() => 90)
+
+const stemHeight = computed(() => {
+  const multiplier = PLANT_DIMENSIONS[plantType.value]?.multiplier || 0.5
+  return Math.max(15, commitCount.value * multiplier)
+})
+
+const bloomSize = computed(() => 
+  Math.max(0, Math.min(12, props.repo.stargazers_count * 0.5))
+)
+
+// Colors
 const stemColor = computed(() => '#228B22')
 const leafColor = computed(() => '#32CD32')
 const bloomColor = computed(() => 
-  languageColors[props.repo.language] || '#FF69B4'
+  LANGUAGE_COLORS[props.repo.language] || '#FF69B4'
 )
 
-// Format date for tooltip
+// Utility functions
 const formatDate = (dateStr) => {
   if (!dateStr) return 'Never'
+  
   const date = new Date(dateStr)
   const now = new Date()
   const diffMs = now - date
@@ -191,3 +220,61 @@ const formatDate = (dateStr) => {
   return date.toLocaleDateString()
 }
 </script>
+
+<style scoped>
+@keyframes grow {
+  0% {
+    opacity: 0;
+    transform: scale(0) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(1deg); }
+}
+
+@keyframes bee-hover {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(1px, -1px); }
+  50% { transform: translate(-1px, 1px); }
+  75% { transform: translate(1px, 1px); }
+}
+
+@keyframes fly-buzz {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(0.5px, 0.5px); }
+  66% { transform: translate(-0.5px, -0.5px); }
+}
+
+@keyframes butterfly-flutter {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(2px, -1px) rotate(2deg); }
+  50% { transform: translate(-1px, -2px) rotate(-1deg); }
+  75% { transform: translate(1px, 1px) rotate(1deg); }
+}
+
+.plant-sway {
+  animation: sway 4s ease-in-out infinite;
+}
+
+.animate-grow {
+  animation: grow 0.8s ease-out forwards;
+}
+
+.animate-bee {
+  animation: bee-hover 2s ease-in-out infinite;
+}
+
+.animate-fly {
+  animation: fly-buzz 0.8s linear infinite;
+}
+
+.animate-butterfly {
+  animation: butterfly-flutter 3s ease-in-out infinite;
+}
+</style>
