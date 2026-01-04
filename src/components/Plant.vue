@@ -9,79 +9,168 @@
     <svg 
       :width="plantSize" 
       :height="plantHeight" 
-      viewBox="0 0 60 100" 
+      viewBox="0 0 107 160" 
       class="mx-auto"
     >
       <!-- Reusable insect definitions -->
       <defs>
+        <!-- Bee: Yellow and black striped body with wings -->
         <g id="bee">
-          <circle r="5" fill="#FFD700" class="animate-pulse"/>
-          <circle r="2.4" fill="#FFA500" class="animate-pulse"/>
+          <!-- Body -->
+          <ellipse cx="0" cy="0" rx="4" ry="2" fill="#FFD700"/>
+          <rect x="-2.5" y="-0.7" width="1" height="1.4" fill="#000"/>
+          <rect x="-0.5" y="-0.7" width="1" height="1.4" fill="#000"/>
+          <rect x="1.5" y="-0.7" width="1" height="1.4" fill="#000"/>
+          <!-- Wings -->
+          <ellipse cx="-1.3" cy="-1.3" rx="2.5" ry="1" fill="#FFF" opacity="0.7"/>
+          <ellipse cx="1.3" cy="-1.3" rx="2.5" ry="1" fill="#FFF" opacity="0.7"/>
         </g>
+        
+        <!-- Fly: Small dark body -->
         <g id="fly">
-          <circle r="4" fill="#666" opacity="0.7"/>
+          <!-- Body -->
+          <ellipse cx="0" cy="0" rx="2.5" ry="1.3" fill="#333"/>
+          <!-- Wings -->
+          <ellipse cx="-0.7" cy="-1" rx="2" ry="0.7" fill="#666" opacity="0.5"/>
+          <ellipse cx="0.7" cy="-1" rx="2" ry="0.7" fill="#666" opacity="0.5"/>
         </g>
+        
+        <!-- Butterfly: Colorful wings -->
         <g id="butterfly">
-          <path d="M-8 0 Q-4 -8 0 0 Q4 -8 8 0" stroke="#FF6B6B" stroke-width="4" fill="none"/>
-          <path d="M-8 0 Q-4 4 0 0 Q4 4 8 0" stroke="#FF6B6B" stroke-width="4" fill="none"/>
+          <!-- Body -->
+          <line x1="0" y1="-4" x2="0" y2="4" stroke="#8B4513" stroke-width="1"/>
+          <!-- Upper wings -->
+          <path d="M-1.3 -2.5 Q-5 -5 -2.5 -1.3 Q-1.3 -2.5 0 -1.3" fill="#FF6B6B"/>
+          <path d="M1.3 -2.5 Q5 -5 2.5 -1.3 Q1.3 -2.5 0 -1.3" fill="#FF6B6B"/>
+          <!-- Lower wings -->
+          <path d="M-1.3 1.3 Q-4 4 -1.3 2.5 Q-1.3 1.3 0 1.3" fill="#FF8E8E"/>
+          <path d="M1.3 1.3 Q4 4 1.3 2.5 Q1.3 1.3 0 1.3" fill="#FF8E8E"/>
+          <!-- Wing spots -->
+          <circle cx="-2.5" cy="-2.5" r="0.7" fill="#FFF" opacity="0.8"/>
+          <circle cx="2.5" cy="-2.5" r="0.7" fill="#FFF" opacity="0.8"/>
         </g>
       </defs>
       <!-- Grass (tiny projects) -->
       <template v-if="plantType === 'grass'">
-        <path d="M25 90 Q27 80 25 70" stroke="#32CD32" stroke-width="2" fill="none"/>
-        <path d="M30 90 Q32 75 30 65" stroke="#228B22" stroke-width="2" fill="none"/>
-        <path d="M35 90 Q37 82 35 72" stroke="#32CD32" stroke-width="2" fill="none"/>
-        <circle v-if="bloomSize > 0" cx="30" cy="65" :r="bloomSize" :fill="bloomColor"/>
+        <path 
+          v-for="(path, i) in config.paths" 
+          :key="i"
+          :d="path.d" 
+          :stroke="path.stroke" 
+          :stroke-width="config.strokeWidth" 
+          fill="none"
+        />
+        <circle 
+          v-if="bloomSize > 0" 
+          :cx="config.bloom.cx" 
+          :cy="config.bloom.cy" 
+          :r="bloomSize" 
+          :fill="bloomColor"
+        />
         
         <!-- Insects for grass -->
-        <use v-if="hasRecentActivity" href="#bee" x="35" y="82" class="animate-bee"/>
-        <use v-if="hasOpenIssues" href="#fly" x="27" y="85" class="animate-fly"/>
-        <use v-if="isPopular" href="#butterfly" x="25" y="80" class="animate-butterfly"/>
+        <use v-if="hasRecentActivity" href="#bee" :x="config.insects.bee.x" :y="config.insects.bee.y" class="animate-bee"/>
+        <use v-if="hasOpenIssues" href="#fly" :x="config.insects.fly.x" :y="config.insects.fly.y" class="animate-fly"/>
+        <use v-if="isPopular" href="#butterfly" :x="config.insects.butterfly.x" :y="config.insects.butterfly.y" class="animate-butterfly"/>
       </template>
 
       <!-- Shrub (small projects) -->
       <template v-else-if="plantType === 'shrub'">
-        <rect x="28" y="70" width="4" :height="stemHeight" :fill="stemColor"/>
-        <ellipse cx="20" cy="75" rx="8" ry="4" :fill="leafColor" transform="rotate(-30 20 75)"/>
-        <ellipse cx="40" cy="80" rx="6" ry="3" :fill="leafColor" transform="rotate(30 40 80)"/>
-        <circle v-if="bloomSize > 0" cx="30" cy="60" :r="bloomSize" :fill="bloomColor"/>
+        <rect 
+          :x="config.stem.x" 
+          :y="config.stem.y" 
+          :width="config.stem.width" 
+          :height="stemHeight" 
+          :fill="stemColor"
+        />
+        <ellipse 
+          v-for="(leaf, i) in config.leaves" 
+          :key="i"
+          :cx="leaf.cx" 
+          :cy="leaf.cy" 
+          :rx="leaf.rx" 
+          :ry="leaf.ry" 
+          :fill="leafColor" 
+          :transform="`rotate(${leaf.rotate} ${leaf.cx} ${leaf.cy})`"
+        />
+        <circle 
+          v-if="bloomSize > 0" 
+          :cx="config.bloom.cx" 
+          :cy="config.bloom.cy" 
+          :r="bloomSize" 
+          :fill="bloomColor"
+        />
         
         <!-- Insects for shrubs -->
-        <use v-if="hasRecentActivity" href="#bee" transform="translate(22,72)" class="animate-bee"/>
-        <use v-if="hasOpenIssues" href="#fly" transform="translate(38,77)" class="animate-fly"/>
-        <use v-if="isPopular" href="#butterfly" transform="translate(18,65)" class="animate-butterfly"/>
+        <use v-if="hasRecentActivity" href="#bee" :transform="config.insects.bee" class="animate-bee"/>
+        <use v-if="hasOpenIssues" href="#fly" :transform="config.insects.fly" class="animate-fly"/>
+        <use v-if="isPopular" href="#butterfly" :transform="config.insects.butterfly" class="animate-butterfly"/>
       </template>
 
       <!-- Tree (medium projects) -->
       <template v-else-if="plantType === 'tree'">
-        <rect x="27" y="60" width="6" :height="stemHeight" :fill="stemColor"/>
-        <path d="M20 50 Q30 40 40 50 Q35 45 30 45 Q25 45 20 50" :fill="leafColor"/>
-        <path d="M22 60 Q30 50 38 60 Q33 55 30 55 Q27 55 22 60" :fill="leafColor"/>
-        <circle v-if="bloomSize > 0" cx="25" cy="45" :r="bloomSize * 0.7" :fill="bloomColor"/>
-        <circle v-if="bloomSize > 0" cx="35" cy="50" :r="bloomSize * 0.7" :fill="bloomColor"/>
+        <rect 
+          :x="config.stem.x" 
+          :y="config.stem.y" 
+          :width="config.stem.width" 
+          :height="stemHeight" 
+          :fill="stemColor"
+        />
+        <path 
+          v-for="(canopy, i) in config.canopy" 
+          :key="i"
+          :d="canopy.d" 
+          :fill="leafColor"
+        />
+        <circle 
+          v-for="(bloom, i) in config.blooms" 
+          :key="i"
+          v-if="bloomSize > 0" 
+          :cx="bloom.cx" 
+          :cy="bloom.cy" 
+          :r="bloomSize" 
+          :fill="bloomColor"
+        />
         
         <!-- Insects for trees -->
-        <use v-if="hasRecentActivity" href="#bee" transform="translate(23,48)" class="animate-bee"/>
-        <use v-if="hasOpenIssues" href="#fly" transform="translate(37,53)" class="animate-fly"/>
-        <use v-if="isPopular" href="#butterfly" transform="translate(17,42)" class="animate-butterfly"/>
+        <use v-if="hasRecentActivity" href="#bee" :transform="config.insects.bee" class="animate-bee"/>
+        <use v-if="hasOpenIssues" href="#fly" :transform="config.insects.fly" class="animate-fly"/>
+        <use v-if="isPopular" href="#butterfly" :transform="config.insects.butterfly" class="animate-butterfly"/>
       </template>
 
       <!-- Oak Tree (large projects) -->
       <template v-else>
-        <rect x="25" y="50" width="10" :height="stemHeight" :fill="stemColor"/>
-        <ellipse cx="30" cy="35" rx="20" ry="15" :fill="leafColor"/>
-        <ellipse cx="25" cy="45" rx="15" ry="10" :fill="leafColor" opacity="0.8"/>
-        <ellipse cx="35" cy="45" rx="15" ry="10" :fill="leafColor" opacity="0.8"/>
-        <circle v-if="bloomSize > 0" cx="20" cy="35" :r="bloomSize * 0.6" :fill="bloomColor"/>
-        <circle v-if="bloomSize > 0" cx="30" cy="30" :r="bloomSize * 0.6" :fill="bloomColor"/>
-        <circle v-if="bloomSize > 0" cx="40" cy="35" :r="bloomSize * 0.6" :fill="bloomColor"/>
+        <rect 
+          :x="config.stem.x" 
+          :y="config.stem.y" 
+          :width="config.stem.width" 
+          :height="stemHeight" 
+          :fill="stemColor"
+        />
+        <ellipse 
+          v-for="(canopy, i) in config.canopy" 
+          :key="i"
+          :cx="canopy.cx" 
+          :cy="canopy.cy" 
+          :rx="canopy.rx" 
+          :ry="canopy.ry" 
+          :fill="leafColor" 
+          :opacity="canopy.opacity"
+        />
+        <circle 
+          v-for="(bloom, i) in config.blooms" 
+          :key="i"
+          v-if="bloomSize > 0" 
+          :cx="bloom.cx" 
+          :cy="bloom.cy" 
+          :r="bloomSize" 
+          :fill="bloomColor"
+        />
         
         <!-- Ecosystem for oak trees -->
-        <use v-if="hasRecentActivity" href="#bee" transform="translate(18,38)" class="animate-bee"/>
-        <use v-if="hasRecentActivity" href="#bee" transform="translate(42,32)" class="animate-bee"/>
-        <use v-if="hasOpenIssues" href="#fly" transform="translate(32,40)" class="animate-fly"/>
-        <use v-if="isPopular" href="#butterfly" transform="translate(15,30)" class="animate-butterfly"/>
-        <use v-if="isPopular" href="#butterfly" transform="translate(45,28)" class="animate-butterfly"/>
+        <use v-for="(bee, i) in config.insects.bees" :key="`bee-${i}`" v-if="hasRecentActivity" href="#bee" :transform="bee" class="animate-bee"/>
+        <use v-if="hasOpenIssues" href="#fly" :transform="config.insects.fly" class="animate-fly"/>
+        <use v-for="(butterfly, i) in config.insects.butterflies" :key="`butterfly-${i}`" v-if="isPopular" href="#butterfly" :transform="butterfly" class="animate-butterfly"/>
       </template>
     </svg>
 
@@ -131,11 +220,82 @@ const PLANT_THRESHOLDS = {
   TREE: 1000000     // 500MB - 1GB, > 1GB = oak
 }
 
-const PLANT_DIMENSIONS = {
-  grass: { height: 60, multiplier: 0.3 },
-  shrub: { height: 90, multiplier: 0.5 },
-  tree: { height: 120, multiplier: 0.7 },
-  oak: { height: 150, multiplier: 0.9 }
+// Plant configurations - centralized for easy maintenance
+const PLANT_CONFIG = {
+  grass: {
+    height: 107,
+    multiplier: 0.53,
+    bloomMultiplier: 1.3,
+    strokeWidth: 3,
+    stemWidth: 3,
+    paths: [
+      { d: 'M43 147 Q47 120 43 93', stroke: '#32CD32' },
+      { d: 'M53 147 Q57 113 53 87', stroke: '#228B22' },
+      { d: 'M63 147 Q67 123 63 97', stroke: '#32CD32' }
+    ],
+    bloom: { cx: 53, cy: 87 },
+    insects: {
+      bee: { x: 63, y: 123 },
+      fly: { x: 47, y: 130 },
+      butterfly: { x: 43, y: 120 }
+    }
+  },
+  shrub: {
+    height: 160,
+    multiplier: 0.8,
+    bloomMultiplier: 1.3,
+    stem: { x: 51, y: 113, width: 5 },
+    leaves: [
+      { cx: 37, cy: 120, rx: 11, ry: 5, rotate: -30 },
+      { cx: 70, cy: 127, rx: 8, ry: 4, rotate: 30 }
+    ],
+    bloom: { cx: 53, cy: 100 },
+    insects: {
+      bee: 'translate(39,117)',
+      fly: 'translate(68,123)',
+      butterfly: 'translate(33,107)'
+    }
+  },
+  tree: {
+    height: 213,
+    multiplier: 1.07,
+    bloomMultiplier: 0.9,
+    stem: { x: 49, y: 100, width: 8 },
+    canopy: [
+      { d: 'M37 83 Q53 70 70 83 Q63 77 53 77 Q43 77 37 83' },
+      { d: 'M40 100 Q53 87 67 100 Q60 93 53 93 Q47 93 40 100' }
+    ],
+    blooms: [
+      { cx: 43, cy: 77 },
+      { cx: 63, cy: 83 }
+    ],
+    insects: {
+      bee: 'translate(41,80)',
+      fly: 'translate(65,87)',
+      butterfly: 'translate(33,73)'
+    }
+  },
+  oak: {
+    height: 267,
+    multiplier: 1.33,
+    bloomMultiplier: 0.8,
+    stem: { x: 47, y: 83, width: 13 },
+    canopy: [
+      { cx: 53, cy: 60, rx: 27, ry: 20, opacity: 1 },
+      { cx: 47, cy: 77, rx: 20, ry: 13, opacity: 0.8 },
+      { cx: 60, cy: 77, rx: 20, ry: 13, opacity: 0.8 }
+    ],
+    blooms: [
+      { cx: 37, cy: 60 },
+      { cx: 53, cy: 53 },
+      { cx: 70, cy: 60 }
+    ],
+    insects: {
+      bees: ['translate(35,63)', 'translate(72,57)'],
+      fly: 'translate(52,70)',
+      butterflies: ['translate(30,53)', 'translate(77,50)']
+    }
+  }
 }
 
 const LANGUAGE_COLORS = {
@@ -178,25 +338,27 @@ const plantType = computed(() => {
   return 'oak'
 })
 
+// Computed plant configuration
+const config = computed(() => PLANT_CONFIG[plantType.value])
+
 // Plant dimensions based on repo stats and type
 const commitCount = computed(() => 
   Math.max(1, Math.min(50, props.repo.size || 1))
 )
 
-const plantHeight = computed(() => 
-  PLANT_DIMENSIONS[plantType.value]?.height || 90
-)
-
-const plantSize = computed(() => 90)
+const plantHeight = computed(() => config.value?.height || 160)
+const plantSize = computed(() => 160)
 
 const stemHeight = computed(() => {
-  const multiplier = PLANT_DIMENSIONS[plantType.value]?.multiplier || 0.5
+  const multiplier = config.value?.multiplier || 0.5
   return Math.max(15, commitCount.value * multiplier)
 })
 
-const bloomSize = computed(() => 
-  Math.max(0, Math.min(12, props.repo.stargazers_count * 0.5))
-)
+const bloomSize = computed(() => {
+  const size = Math.max(0, Math.min(12, props.repo.stargazers_count * 0.5))
+  const multiplier = config.value?.bloomMultiplier || 1
+  return size * multiplier
+})
 
 // Colors
 const stemColor = computed(() => '#228B22')
