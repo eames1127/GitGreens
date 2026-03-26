@@ -1,8 +1,23 @@
 <template>
   <div class="relative">
     <!-- Garden Stats -->
-    <div class="text-center mb-6 text-white">
-      <p class="text-lg">🌿 {{ repos.length }} plants growing • ⭐ {{ totalStars }} stars collected</p>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      <div class="bg-white/10 rounded-xl px-4 py-3 text-center text-white">
+        <div class="text-2xl font-bold">{{ repos.length }}</div>
+        <div class="text-xs opacity-70 mt-1">🌿 Repos</div>
+      </div>
+      <div class="bg-white/10 rounded-xl px-4 py-3 text-center text-white">
+        <div class="text-2xl font-bold">{{ totalStars }}</div>
+        <div class="text-xs opacity-70 mt-1">⭐ Total Stars</div>
+      </div>
+      <div class="bg-white/10 rounded-xl px-4 py-3 text-center text-white">
+        <div class="text-2xl font-bold">{{ topLanguage }}</div>
+        <div class="text-xs opacity-70 mt-1">🔧 Top Language</div>
+      </div>
+      <div class="bg-white/10 rounded-xl px-4 py-3 text-center text-white">
+        <div class="text-2xl font-bold">{{ activeRepos }}</div>
+        <div class="text-xs opacity-70 mt-1">🐝 Active This Week</div>
+      </div>
     </div>
 
     <!-- Export Button -->
@@ -56,4 +71,17 @@ const gardenRef = ref(null)
 const totalStars = computed(() => 
   props.repos.reduce((sum, repo) => sum + repo.stargazers_count, 0)
 )
+
+const topLanguage = computed(() => {
+  const counts = props.repos.reduce((acc, repo) => {
+    if (repo.language) acc[repo.language] = (acc[repo.language] || 0) + 1
+    return acc
+  }, {})
+  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'
+})
+
+const activeRepos = computed(() => {
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  return props.repos.filter(repo => new Date(repo.pushed_at) > weekAgo).length
+})
 </script>
