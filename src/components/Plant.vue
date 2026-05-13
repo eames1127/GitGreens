@@ -13,11 +13,13 @@
       :stem-height="stemHeight"
       :bloom-size="bloomSize"
       :stem-color="stemColor"
-      :leaf-color="leafColor"
-      :bloom-color="bloomColor"
+      :leaf-color="seasonConfig.leafTint ?? leafColor"
+      :bloom-color="seasonConfig.bloomTint ?? bloomColor"
       :has-recent-activity="hasRecentActivity"
       :has-open-issues="hasOpenIssues"
       :is-popular="isPopular"
+      :css-filter="seasonConfig.cssFilter"
+      :snow-caps="seasonConfig.snowCaps"
     />
     
     <PlantTooltip 
@@ -31,11 +33,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { usePlantData } from '../composables/usePlantData.js'
 import PlantSVG from './plant/PlantSVG.vue'
 import PlantTooltip from './plant/PlantTooltip.vue'
-import { SEASONS } from '../seasons.js';
+import { SEASONS } from '../config/seasons.js'
 
 const props = defineProps({
   repo: {
@@ -45,12 +47,17 @@ const props = defineProps({
   delay: {
     type: Number,
     default: 0
+  },
+  season: {
+    type: String,
+    default: 'summer'
   }
 })
 
 const showTooltip = ref(false)
 
-// Use the plant data composable
+const seasonConfig = computed(() => SEASONS[props.season] ?? SEASONS.summer)
+
 const {
   hasRecentActivity,
   hasOpenIssues,
@@ -66,8 +73,7 @@ const {
   bloomColor,
   formatDate
 } = usePlantData(props.repo)
-</script>,
-
+</script>
 
 <style scoped>
 @keyframes grow {

@@ -12,6 +12,23 @@
       </button>
     </header>
 
+    <!-- Season Toggle -->
+    <div class="flex justify-center gap-2 mb-6 flex-wrap">
+      <button
+        v-for="(config, key) in SEASONS"
+        :key="key"
+        @click="setSeason(key)"
+        :class="[
+          'px-4 py-2 rounded-full text-sm font-medium transition-all',
+          season === key
+            ? 'bg-white text-green-800 shadow'
+            : 'bg-white/20 text-white hover:bg-white/30'
+        ]"
+      >
+        {{ config.label }}
+      </button>
+    </div>
+
     <!-- Input Section -->
     <div class="max-w-md mx-auto mb-8">
       <div class="flex gap-2">
@@ -43,6 +60,7 @@
       ref="gardenCanvasRef"
       :repos="repos" 
       :loading="loading"
+      :season="season"
       @export="exportGarden"
     />
 
@@ -59,9 +77,12 @@ import { toPng } from 'html-to-image'
 import GardenCanvas from './GardenCanvas.vue'
 import GardenKey from './GardenKey.vue'
 import { useGitHub } from '../composables/useGitHub'
+import { useSeason } from '../composables/useSeason'
+import { SEASONS } from '../config/seasons.js'
 
 const { isDark, toggleTheme } = inject('theme')
 const { fetchUserRepos, loading, error } = useGitHub()
+const { season, setSeason } = useSeason()
 
 const username = ref('')
 const repos = ref([])

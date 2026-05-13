@@ -1,43 +1,60 @@
-// src/seasons.js
 export const SEASONS = {
   spring: {
     label: '🌸 Spring',
-    sky: '#d4f0fc',
-    ground: '#7ec850',
-    flowerTints: ['#ffb7c5', '#fffacd', '#c8f7c5'],
+    skyClass: 'from-sky-200 to-green-100',
+    groundClass: 'bg-green-500',
+    borderClass: 'border-green-400',
     particleEmoji: '🌸',
-    bgClass: 'bg-spring',
-    treeFilter: 'hue-rotate(10deg) saturate(1.3)',
-    groundCover: 'small pink blossoms scattered',
+    particleCount: 14,
+    bloomTint: '#FFB7C5',
+    leafTint: '#88d860',
+    cssFilter: 'hue-rotate(10deg) saturate(1.3)',
+    snowCaps: false,
   },
   summer: {
     label: '☀️ Summer',
-    sky: '#87ceeb',
-    ground: '#4caf50',
-    flowerTints: ['#ffeb3b', '#ff9800', '#f44336'],
-    particleEmoji: '🌻',
-    bgClass: 'bg-summer',
-    treeFilter: 'saturate(1.5)',
-    groundCover: 'lush green grass',
+    skyClass: 'from-blue-400 to-sky-300',
+    groundClass: 'bg-green-700',
+    borderClass: 'border-green-600',
+    particleEmoji: null,
+    particleCount: 0,
+    bloomTint: null,
+    leafTint: null,
+    cssFilter: 'saturate(1.5)',
+    snowCaps: false,
   },
   autumn: {
     label: '🍂 Autumn',
-    sky: '#f4a460',
-    ground: '#8b6914',
-    flowerTints: ['#ff6b35', '#f7c59f', '#d4a017'],
+    skyClass: 'from-orange-300 to-amber-200',
+    groundClass: 'bg-yellow-900',
+    borderClass: 'border-yellow-800',
     particleEmoji: '🍂',
-    bgClass: 'bg-autumn',
-    treeFilter: 'hue-rotate(30deg) saturate(1.4)',
-    groundCover: 'fallen orange and red leaves',
+    particleCount: 18,
+    bloomTint: '#e67e22',
+    leafTint: '#c0392b',
+    cssFilter: 'hue-rotate(30deg) saturate(1.4)',
+    snowCaps: false,
   },
   winter: {
     label: '❄️ Winter',
-    sky: '#e8f4fd',
-    ground: '#d6e8f0',
-    flowerTints: ['#b0c4de', '#e0e8f0', '#ffffff'],
+    skyClass: 'from-blue-100 to-slate-100',
+    groundClass: 'bg-slate-200',
+    borderClass: 'border-slate-300',
     particleEmoji: '❄️',
-    bgClass: 'bg-winter',
-    treeFilter: 'saturate(0.3) brightness(1.1)',
-    groundCover: 'snow patches on ground',
+    particleCount: 22,
+    bloomTint: '#ffffff',
+    leafTint: '#9ab8d0',
+    cssFilter: 'saturate(0.3) brightness(1.1)',
+    snowCaps: true,
   },
-};
+}
+
+export const SEASON_KEYS = Object.keys(SEASONS)
+
+export function detectSeason() {
+  const month = new Date().getMonth()
+  if (month >= 2 && month <= 4) return 'spring'
+  if (month >= 5 && month <= 7) return 'summer'
+  if (month >= 8 && month <= 10) return 'autumn'
+  return 'winter'
+}
