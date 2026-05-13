@@ -35,6 +35,7 @@ import { ref } from 'vue'
 import { usePlantData } from '../composables/usePlantData.js'
 import PlantSVG from './plant/PlantSVG.vue'
 import PlantTooltip from './plant/PlantTooltip.vue'
+import { SEASONS } from '../seasons.js';
 
 const props = defineProps({
   repo: {

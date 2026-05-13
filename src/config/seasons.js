@@ -1,0 +1,43 @@
+// src/seasons.js
+export const SEASONS = {
+  spring: {
+    label: '🌸 Spring',
+    sky: '#d4f0fc',
+    ground: '#7ec850',
+    flowerTints: ['#ffb7c5', '#fffacd', '#c8f7c5'],
+    particleEmoji: '🌸',
+    bgClass: 'bg-spring',
+    treeFilter: 'hue-rotate(10deg) saturate(1.3)',
+    groundCover: 'small pink blossoms scattered',
+  },
+  summer: {
+    label: '☀️ Summer',
+    sky: '#87ceeb',
+    ground: '#4caf50',
+    flowerTints: ['#ffeb3b', '#ff9800', '#f44336'],
+    particleEmoji: '🌻',
+    bgClass: 'bg-summer',
+    treeFilter: 'saturate(1.5)',
+    groundCover: 'lush green grass',
+  },
+  autumn: {
+    label: '🍂 Autumn',
+    sky: '#f4a460',
+    ground: '#8b6914',
+    flowerTints: ['#ff6b35', '#f7c59f', '#d4a017'],
+    particleEmoji: '🍂',
+    bgClass: 'bg-autumn',
+    treeFilter: 'hue-rotate(30deg) saturate(1.4)',
+    groundCover: 'fallen orange and red leaves',
+  },
+  winter: {
+    label: '❄️ Winter',
+    sky: '#e8f4fd',
+    ground: '#d6e8f0',
+    flowerTints: ['#b0c4de', '#e0e8f0', '#ffffff'],
+    particleEmoji: '❄️',
+    bgClass: 'bg-winter',
+    treeFilter: 'saturate(0.3) brightness(1.1)',
+    groundCover: 'snow patches on ground',
+  },
+};
