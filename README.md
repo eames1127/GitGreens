@@ -18,6 +18,11 @@ A fun, nature-themed visualization of your GitHub activity! Watch your repositor
   - Plant height = repository size and activity
   - Flower color = programming language
   - Bloom size = star count
+- **Seasonal Themes**: Switch between four seasons that transform your garden:
+  - 🌸 **Spring**: Pink blossom canopies, pastel sky, falling petals
+  - ☀️ **Summer**: Deep green canopies, blue sky, vivid blooms
+  - 🍂 **Autumn**: Red and orange canopies, amber sky, drifting leaves
+  - ❄️ **Winter**: Frost-blue canopies, snow caps on every plant, falling snowflakes
 - **Interactive**: Hover tooltips with detailed repo information
 - **Garden Key**: Visual legend explaining plant types and ecosystem elements
 - **Themes**: Light and dark garden modes
@@ -45,11 +50,19 @@ GitGreens/
 │   └── ISSUE_TEMPLATE/
 ├── src/
 │   ├── components/
-│   │   ├── GardenCanvas.vue  # Garden grid container
+│   │   ├── plant/
+│   │   │   ├── PlantSVG.vue      # Plant SVG renderer
+│   │   │   └── PlantTooltip.vue  # Hover tooltip
+│   │   ├── GardenCanvas.vue  # Garden container with seasonal theming
+│   │   ├── GardenKey.vue     # Visual legend
 │   │   ├── Home.vue          # Main input and layout
-│   │   └── Plant.vue         # Individual plant SVG
+│   │   └── Plant.vue         # Individual plant wrapper
 │   ├── composables/
-│   │   └── useGitHub.js      # GitHub API logic
+│   │   ├── useGitHub.js      # GitHub API logic
+│   │   ├── usePlantData.js   # Plant appearance logic
+│   │   └── useSeason.js      # Season detection and toggle
+│   ├── config/
+│   │   └── seasons.js        # Season palettes, particles, and effects
 │   ├── App.vue               # Root component with theming
 │   ├── main.js               # Vue app entry
 │   └── style.css             # Global styles + animations
@@ -68,13 +81,14 @@ GitGreens/
 
 1. **Enter Username**: Type any GitHub username
 2. **Fetch Data**: Pulls public repositories via GitHub REST API
-3. **Generate Garden**: Each repo becomes a plant with:
+3. **Choose a Season**: Pick from Spring, Summer, Autumn, or Winter — the garden auto-detects the current real-world season on load
+4. **Generate Garden**: Each repo becomes a plant with:
    - **Plant Type**: Determined by repository size (grass → shrub → tree → oak)
    - **Stem Height**: Based on repository activity and size
-   - **Flower Color**: Matches the main programming language
+   - **Flower Color**: Matches the main programming language, tinted by the active season
    - **Bloom Size**: Reflects star count popularity
    - **Ecosystem**: Living insects show project health and activity
-4. **Enjoy**: Watch your garden grow with smooth animations!
+5. **Enjoy**: Watch your garden grow with smooth animations!
 
 ## 🌿 Garden Ecosystem
 
@@ -88,6 +102,17 @@ GitGreens/
 | 🌳 **Trees** | Large Projects | Repository size 500MB - 1GB |
 | 🌲 **Oak Trees** | Massive Projects | Repository size > 1GB |
 
+## 🍂 Seasonal Themes
+
+| Season | Sky | Ground | Plants | Particles |
+|--------|-----|--------|--------|-----------|
+| 🌸 **Spring** | Pastel blue → mint | Bright green | Pink blossom tints | Falling petals |
+| ☀️ **Summer** | Sky blue | Deep green | Vivid saturated leaves | None |
+| 🍂 **Autumn** | Amber → orange | Dry earth | Red and orange canopies | Drifting leaves |
+| ❄️ **Winter** | Pale blue → white | Snow | Frost-blue, desaturated, snow-capped | Falling snowflakes |
+
+The season is auto-detected from the current month on load and can be overridden at any time using the season toggle above the garden.
+
 ## 🎨 Plant Mapping
 
 | Repo Attribute | Plant Feature | Visual Effect |
@@ -98,6 +123,7 @@ GitGreens/
 | Star Count | Butterflies + Bloom Size | Red butterflies for popular repos |
 | Language | Flower Color | JavaScript = yellow, Python = blue, etc. |
 | Activity Level | Animation | Recent activity = more sway |
+| Season | Leaf & bloom tint, CSS filter | Colors shift to match the active season |
 
 ## 🎯 Future Enhancements
 
@@ -109,7 +135,6 @@ GitGreens/
   - CI/CD status = garden irrigation systems
 
 ### 🎨 Visual Improvements
-- **Seasonal Themes**: Spring blooms, autumn colors, winter frost
 - **Weather Effects**: Rain for active days, sunshine for stars
 - **Time-lapse Mode**: Watch garden evolution over time
 - **Advanced Plant Types**: Fruit trees for mature repos, cacti for archived ones
@@ -141,7 +166,7 @@ Inspired by the existing GitGarden concept, this project is a fresh reimagining 
 ## 🤝 Contributing
 
 Fork, customize, and share your garden themes! This project is designed to be:
-- **Modular**: Easy to add new plant types
+- **Modular**: Easy to add new plant types or seasons
 - **Extensible**: Simple to add new data sources
 - **Styleable**: TailwindCSS makes theming a breeze
 
