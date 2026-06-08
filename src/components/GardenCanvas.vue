@@ -37,13 +37,10 @@
         'relative rounded-xl border-4 overflow-hidden transition-all duration-700',
         seasonConfig.borderClass
       ]"
-      :style="{ height: gardenHeight }"
+      :style="{ minHeight: '280px' }"
     >
       <!-- Sky background -->
       <div :class="['absolute inset-0 bg-gradient-to-b transition-all duration-700', seasonConfig.skyClass]" />
-
-      <!-- Ground strip -->
-      <div :class="['absolute bottom-0 left-0 right-0 h-20 transition-all duration-700 z-10', seasonConfig.groundClass]" />
 
       <!-- Seasonal particles -->
       <template v-if="seasonConfig.particleEmoji">
@@ -62,23 +59,40 @@
           <p class="text-sm opacity-80">Growing your garden...</p>
         </div>
       </div>
-      <div
-        class="absolute left-0 right-0 z-20 px-2"
-        style="bottom: 80px;"
-      >
-        <div class="flex flex-wrap-reverse items-end" style="gap: 2px;">
-          <div
-            v-for="(repo, index) in repos"
-            :key="repo.id"
-            class="plant-slot"
-          >
-            <Plant
-              :repo="repo"
-              :delay="index * 100"
-              :season="season"
-              :style="{ animationDelay: `${index * 100}ms` }"
+
+      <!-- Rows: each row is a ground strip with plants sitting on it -->
+      <div class="relative z-10 flex flex-col justify-end" style="min-height: 280px;">
+        <!-- Sky spacer -->
+        <div class="flex-1" style="min-height: 60px;" />
+
+        <div
+          v-for="(row, rowIndex) in plantRows"
+          :key="rowIndex"
+          class="row-strip"
+          :class="seasonConfig.groundClass"
+        >
+          <!-- Plants sit on top of this ground strip -->
+          <div class="plants-on-ground">
+            <div
+              v-for="(repo, colIndex) in row"
+              :key="repo.id"
+              class="plant-slot"
+            >
+              <Plant
+                :repo="repo"
+                :delay="(rowIndex * COLS + colIndex) * 80"
+                :season="season"
+              />
+            </div>
+            <!-- Empty spacer slots to keep grid consistent -->
+            <div
+              v-for="i in (COLS - row.length)"
+              :key="`empty-${i}`"
+              class="plant-slot"
             />
           </div>
+          <!-- Ground surface -->
+          <div class="ground-surface" :class="seasonConfig.groundClass" />
         </div>
       </div>
     </div>
@@ -91,9 +105,6 @@ import Plant from './Plant.vue'
 import { SEASONS } from '../config/seasons.js'
 
 const COLS = 8
-const ROW_HEIGHT = 120
-const GROUND_H = 80
-const SKY_MIN = 100
 
 const props = defineProps({
   repos: Array,
@@ -110,10 +121,14 @@ const gardenRef = ref(null)
 
 const seasonConfig = computed(() => SEASONS[props.season] ?? SEASONS.summer)
 
-// Expand the garden height to fit all plant rows, always with sky above
-const gardenHeight = computed(() => {
-  const rows = Math.ceil((props.repos?.length || 0) / COLS)
-  return `${Math.max(1, rows) * ROW_HEIGHT + GROUND_H + SKY_MIN}px`
+// Split repos into rows of COLS each
+const plantRows = computed(() => {
+  const rows = []
+  const list = props.repos || []
+  for (let i = 0; i < list.length; i += COLS) {
+    rows.push(list.slice(i, i + COLS))
+  }
+  return rows
 })
 
 function particleStyle(n) {
@@ -145,10 +160,26 @@ const activeRepos = computed(() => {
 </script>
 
 <style scoped>
-/* 8 plants per row, minus the 2px gap */
 .plant-slot {
   flex: 0 0 calc(12.5% - 2px);
-  min-width: 60px;
+  min-width: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* Each row is a ground strip. Plants hang above it, ground sits below. */
+.row-strip {
+  position: relative;
+  width: 100%;
+  padding: 0 8px;
+}
+
+.plants-on-ground {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 100%;
 }
 
 .particle {
