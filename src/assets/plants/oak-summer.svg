@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 210" width="130" height="210">
+  <rect x="55" y="155" width="20" height="53" fill="#78350f" rx="4"/>
+  <path d="M55 198 Q44 204 36 208" stroke="#78350f" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M75 198 Q86 204 94 208" stroke="#78350f" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <line x1="61" y1="158" x2="58" y2="192" stroke="#451a03" stroke-width="2" opacity="0.35"/>
+  <line x1="70" y1="160" x2="73" y2="190" stroke="#451a03" stroke-width="1.5" opacity="0.25"/>
+  <!-- Taller canopy -->
+  <ellipse cx="65" cy="108" rx="52" ry="35" fill="#15803d" opacity="0.5"/>
+  <ellipse cx="38" cy="118" rx="32" ry="24" fill="#16a34a" opacity="0.75"/>
+  <ellipse cx="92" cy="115" rx="30" ry="22" fill="#16a34a" opacity="0.75"/>
+  <ellipse cx="65" cy="98" rx="38" ry="28" fill="#22c55e" opacity="0.9"/>
+  <ellipse cx="46" cy="106" rx="24" ry="19" fill="#22c55e"/>
+  <ellipse cx="84" cy="102" rx="24" ry="19" fill="#22c55e"/>
+  <ellipse cx="65" cy="82" rx="28" ry="22" fill="#4ade80"/>
+  <ellipse cx="56" cy="75" rx="16" ry="12" fill="#86efac" opacity="0.4"/>
+  <!-- Petal flowers across canopy -->
+  <g transform="translate(30,110)">
+    <ellipse cx="0" cy="-4.5" rx="3" ry="4.5" fill="#fbbf24" transform="rotate(0)"/>
+    <ellipse cx="0" cy="-4.5" rx="3" ry="4.5" fill="#fbbf24" transform="rotate(72)"/>
+    <ellipse cx="0" cy="-4.5" rx="3" ry="4.5" fill="#fbbf24" transform="rotate(144)"/>
+    <ellipse cx="0" cy="-4.5" rx="3" ry="4.5" fill="#fbbf24" transform="rotate(216)"/>
+    <ellipse cx="0" cy="-4.5" rx="3" ry="4.5" fill="#fbbf24" transform="rotate(288)"/>
+    <circle cx="0" cy="0" r="3" fill="#92400e"/>
+  </g>
+  <g transform="translate(50,86)">
+    <ellipse cx="0" cy="-5" rx="3.5" ry="5" fill="#fcd34d" transform="rotate(0)"/>
+    <ellipse cx="0" cy="-5" rx="3.5" ry="5" fill="#fcd34d" transform="rotate(72)"/>
+    <ellipse cx="0" cy="-5" rx="3.5" ry="5" fill="#fcd34d" transform="rotate(144)"/>
+    <ellipse cx="0" cy="-5" rx="3.5" ry="5" fill="#fcd34d" transform="rotate(216)"/>
+    <ellipse cx="0" cy="-5" rx="3.5" ry="5" fill="#fcd34d" transform="rotate(288)"/>
+    <circle cx="0" cy="0" r="3.5" fill="#92400e"/>
+  </g>
+  <g transform="translate(65,72)">
+    <ellipse cx="0" cy="-5" rx="3.5" ry="5" fill="#fde68a" transform="rotate(36)"/>
+    <ellipse cx="0" cy="-5" rx="3.5" ry="5" fill="#fde68a" transform="rotate(108)"/>
+    <ellipse cx="0" cy="-5" rx="3.5" ry="5" fill="#fde68a" transform="rotate(180)"/>
+    <ellipse cx="0" cy="-5" rx="3.5" ry="5" fill="#fde68a" transform="rotate(252)"/>
+    <ellipse cx="0" cy="-5" rx="3.5" ry="5" fill="#fde68a" transform="rotate(324)"/>
+    <circle cx="0" cy="0" r="3.5" fill="#92400e"/>
+  </g>
+  <g transform="translate(82,92)">
+    <ellipse cx="0" cy="-4.5" rx="3" ry="4.5" fill="#fbbf24" transform="rotate(0)"/>
+    <ellipse cx="0" cy="-4.5" rx="3" ry="4.5" fill="#fbbf24" transform="rotate(72)"/>
+    <ellipse cx="0" cy="-4.5" rx="3" ry="4.5" fill="#fbbf24" transform="rotate(144)"/>
+    <ellipse cx="0" cy="-4.5" rx="3" ry="4.5" fill="#fbbf24" transform="rotate(216)"/>
+    <ellipse cx="0" cy="-4.5" rx="3" ry="4.5" fill="#fbbf24" transform="rotate(288)"/>
+    <circle cx="0" cy="0" r="3" fill="#92400e"/>
+  </g>
+  <g transform="translate(98,106)">
+    <ellipse cx="0" cy="-4" rx="2.5" ry="4" fill="#fcd34d" transform="rotate(0)"/>
+    <ellipse cx="0" cy="-4" rx="2.5" ry="4" fill="#fcd34d" transform="rotate(72)"/>
+    <ellipse cx="0" cy="-4" rx="2.5" ry="4" fill="#fcd34d" transform="rotate(144)"/>
+    <ellipse cx="0" cy="-4" rx="2.5" ry="4" fill="#fcd34d" transform="rotate(216)"/>
+    <ellipse cx="0" cy="-4" rx="2.5" ry="4" fill="#fcd34d" transform="rotate(288)"/>
+    <circle cx="0" cy="0" r="2.5" fill="#92400e"/>
+  </g>
+</svg>
