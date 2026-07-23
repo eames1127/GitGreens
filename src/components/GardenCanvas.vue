@@ -22,7 +22,7 @@
 
     <!-- Export Button -->
     <div class="text-center mb-4">
-      <button 
+      <button
         @click="$emit('export')"
         class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors"
       >
@@ -39,8 +39,14 @@
       ]"
       :style="{ minHeight: '280px' }"
     >
-      <!-- Sky background -->
+      <!-- Sky — slim strip at top -->
       <div :class="['absolute inset-0 bg-gradient-to-b transition-all duration-700', seasonConfig.skyClass]" />
+
+      <!-- Ground — lower 60% so plants root into it -->
+      <div
+        :class="['absolute left-0 right-0 bottom-0 transition-all duration-700 z-10', seasonConfig.groundClass]"
+        style="height: 62%;"
+      />
 
       <!-- Seasonal particles -->
       <template v-if="seasonConfig.particleEmoji">
@@ -52,7 +58,7 @@
         >{{ seasonConfig.particleEmoji }}</span>
       </template>
 
-      <!-- Loading animation -->
+      <!-- Loading -->
       <div v-if="loading" class="absolute inset-0 flex items-center justify-center z-30">
         <div class="text-white text-center">
           <div class="text-4xl mb-2 animate-bounce">🌱</div>
@@ -60,39 +66,19 @@
         </div>
       </div>
 
-      <!-- Rows: each row is a ground strip with plants sitting on it -->
-      <div class="relative z-10 flex flex-col justify-end" style="min-height: 280px;">
-        <!-- Sky spacer -->
-        <div class="flex-1" style="min-height: 60px;" />
-
-        <div
-          v-for="(row, rowIndex) in plantRows"
-          :key="rowIndex"
-          class="row-strip"
-          :class="seasonConfig.groundClass"
-        >
-          <!-- Plants sit on top of this ground strip -->
-          <div class="plants-on-ground">
-            <div
-              v-for="(repo, colIndex) in row"
-              :key="repo.id"
-              class="plant-slot"
-            >
-              <Plant
-                :repo="repo"
-                :delay="(rowIndex * COLS + colIndex) * 80"
-                :season="season"
-              />
-            </div>
-            <!-- Empty spacer slots to keep grid consistent -->
-            <div
-              v-for="i in (COLS - row.length)"
-              :key="`empty-${i}`"
-              class="plant-slot"
-            />
-          </div>
-          <!-- Ground surface -->
-          <div class="ground-surface" :class="seasonConfig.groundClass" />
+      <!-- Plants — flush to bottom, no gaps, wrap naturally -->
+      <div
+        class="absolute left-0 right-0 bottom-0 z-20"
+        style="padding: 0 4px 0 4px;"
+      >
+        <div class="flex flex-wrap items-end" style="gap: 0;">
+          <Plant
+            v-for="(repo, index) in repos"
+            :key="repo.id"
+            :repo="repo"
+            :delay="index * 60"
+            :season="season"
+          />
         </div>
       </div>
     </div>
@@ -104,32 +90,16 @@ import { ref, computed } from 'vue'
 import Plant from './Plant.vue'
 import { SEASONS } from '../config/seasons.js'
 
-const COLS = 8
-
 const props = defineProps({
   repos: Array,
   loading: Boolean,
-  season: {
-    type: String,
-    default: 'summer'
-  }
+  season: { type: String, default: 'summer' }
 })
 
 defineEmits(['export'])
 
 const gardenRef = ref(null)
-
 const seasonConfig = computed(() => SEASONS[props.season] ?? SEASONS.summer)
-
-// Split repos into rows of COLS each
-const plantRows = computed(() => {
-  const rows = []
-  const list = props.repos || []
-  for (let i = 0; i < list.length; i += COLS) {
-    rows.push(list.slice(i, i + COLS))
-  }
-  return rows
-})
 
 function particleStyle(n) {
   const seed = n * 137
@@ -142,55 +112,41 @@ function particleStyle(n) {
 }
 
 const totalStars = computed(() =>
-  props.repos.reduce((sum, repo) => sum + repo.stargazers_count, 0)
+  props.repos.reduce((sum, r) => sum + r.stargazers_count, 0)
 )
-
 const topLanguage = computed(() => {
-  const counts = props.repos.reduce((acc, repo) => {
-    if (repo.language) acc[repo.language] = (acc[repo.language] || 0) + 1
+  const counts = props.repos.reduce((acc, r) => {
+    if (r.language) acc[r.language] = (acc[r.language] || 0) + 1
     return acc
   }, {})
   return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'
 })
-
 const activeRepos = computed(() => {
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  return props.repos.filter(repo => new Date(repo.pushed_at) > weekAgo).length
+  return props.repos.filter(r => new Date(r.pushed_at) > weekAgo).length
 })
 </script>
 
 <style scoped>
-.plant-slot {
-  flex: 0 0 calc(12.5% - 2px);
-  min-width: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-/* Each row is a ground strip. Plants hang above it, ground sits below. */
-.row-strip {
-  position: relative;
-  width: 100%;
-  padding: 0 8px;
-}
-
-.plants-on-ground {
-  display: flex;
-  align-items: flex-end;
-  gap: 2px;
-  width: 100%;
-}
-
 .particle {
   animation: fall linear infinite;
   opacity: 0;
 }
 
 @keyframes fall {
-  0%   { transform: translateY(-20px) rotate(0deg); opacity: 0; }
-  10%  { opacity: 0.85; }
-  85%  { opacity: 0.8; }
-  100% { transform: translateY(100%) rotate(360deg); opacity: 0; }
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100%) rotate(360deg);
+    opacity: 0;
+    }
 }
 </style>
