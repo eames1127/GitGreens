@@ -2,8 +2,11 @@
   <div 
     v-if="show"
     ref="tooltipRef"
-    class="absolute bottom-full left-1/2 mb-2 px-3 py-2 bg-black/80 text-white text-sm rounded-lg whitespace-nowrap z-10"
-    :style="{ transform: `translateX(calc(-50% + ${shift}px))` }"
+    :class="[
+      'absolute left-1/2 px-3 py-2 bg-black/80 text-white text-sm rounded-lg whitespace-nowrap z-10',
+      placement === 'above' ? 'bottom-full mb-2' : 'top-full mt-2'
+    ]"
+    :style="{ transform: `translate(calc(-50% + ${shift}px), ${drop}px)` }"
   >
     <div class="font-semibold">{{ repo.name }}</div>
     <div class="text-xs opacity-80">
@@ -20,7 +23,10 @@
     </div>
     <!-- Arrow moves back by the same shift so it still points at the plant -->
     <div
-      class="absolute top-full left-1/2 border-4 border-transparent border-t-black/80"
+      :class="[
+        'absolute left-1/2 border-4 border-transparent',
+        placement === 'above' ? 'top-full border-t-black/80' : 'bottom-full border-b-black/80'
+      ]"
       :style="{ transform: `translateX(calc(-50% - ${shift}px))` }"
     ></div>
   </div>
@@ -39,14 +45,20 @@ const props = defineProps({
 
 // Gap kept between the tooltip and the garden's edge
 const EDGE_MARGIN = 8
+// Matches the mb-2 / mt-2 gap between the tooltip and its plant
+const PLANT_GAP = 8
 
 const tooltipRef = ref(null)
 const shift = ref(0)
+const drop = ref(0)
+const placement = ref('above')
 
-// The garden clips its contents, so a tooltip centred on a plant near either edge
-// would be cut off; nudge it back inside the garden instead.
+// The garden clips its contents, so a tooltip centred above a plant near any edge
+// would be cut off; move it back inside the garden instead.
 watch(() => props.show, async (visible) => {
   shift.value = 0
+  drop.value = 0
+  placement.value = 'above'
   if (!visible) return
 
   await nextTick()
@@ -61,5 +73,15 @@ watch(() => props.show, async (visible) => {
 
   if (overflowLeft > 0) shift.value = overflowLeft
   else if (overflowRight > 0) shift.value = -overflowRight
+
+  const overflowTop = bounds.top + EDGE_MARGIN - box.top
+  if (overflowTop <= 0) return
+
+  // Prefer flipping below the plant; a plant on the bottom row has no room there,
+  // so slide the tooltip down just far enough to stay inside the garden instead
+  const plant = tooltip.parentElement.getBoundingClientRect()
+  const fitsBelow = plant.bottom + PLANT_GAP + box.height <= bounds.bottom - EDGE_MARGIN
+  if (fitsBelow) placement.value = 'below'
+  else drop.value = overflowTop
 })
 </script>
