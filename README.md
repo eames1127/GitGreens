@@ -40,6 +40,10 @@ npm run dev
 
 # Build for production
 npm run build
+
+# Lint and run the unit tests (CI runs both, plus the build, on every PR)
+npm run lint
+npm test
 ```
 
 ## 🏗️ Project Structure
