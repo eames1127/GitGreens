@@ -16,18 +16,27 @@ function describeFailure(response) {
   return 'Failed to fetch repositories'
 }
 
+// GitHub's own rules: 1-39 alphanumerics or single hyphens, not starting or ending with a hyphen
+const GITHUB_USERNAME = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i
+
 export function useGitHub() {
   const loading = ref(false)
   const error = ref(null)
 
   const fetchUserRepos = async (username) => {
-    loading.value = true
     error.value = null
+
+    if (!GITHUB_USERNAME.test(username)) {
+      error.value = 'That is not a valid GitHub username'
+      return null
+    }
+
+    loading.value = true
 
     try {
       const repos = []
       for (let page = 1; page <= MAX_PAGES; page++) {
-        const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=${PER_PAGE}&page=${page}`)
+        const response = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}/repos?sort=updated&per_page=${PER_PAGE}&page=${page}`)
 
         if (!response.ok) {
           throw new Error(describeFailure(response))

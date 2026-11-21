@@ -50,8 +50,8 @@
     </div>
 
     <!-- Error Message -->
-    <div v-if="error" class="max-w-md mx-auto mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-white text-center">
-      {{ error }}
+    <div v-if="error || exportError" class="max-w-md mx-auto mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-white text-center">
+      {{ error || exportError }}
     </div>
 
     <!-- Garden Canvas -->
@@ -87,10 +87,12 @@ const { season, setSeason } = useSeason()
 const username = ref('')
 const repos = ref([])
 const gardenCanvasRef = ref(null)
+const exportError = ref(null)
 
 const growGarden = async () => {
   if (!username.value.trim()) return
   
+  exportError.value = null
   repos.value = []
   const data = await fetchUserRepos(username.value.trim())
   if (data) {
@@ -100,6 +102,7 @@ const growGarden = async () => {
 
 const exportGarden = async () => {
   if (!gardenCanvasRef.value) return
+  exportError.value = null
   
   try {
     const dataUrl = await toPng(gardenCanvasRef.value.$refs.gardenRef, {
@@ -113,6 +116,7 @@ const exportGarden = async () => {
     link.click()
   } catch (err) {
     console.error('Failed to export garden:', err)
+    exportError.value = 'Sorry, the garden could not be exported. Please try again.'
   }
 }
 </script>
