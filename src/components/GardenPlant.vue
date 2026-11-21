@@ -11,12 +11,13 @@
   >
     <!-- Each layer is absolutely positioned, bottom-aligned, back to front -->
 
-    <!-- LAYER 1 (back): Oak — only for oak repos -->
+    <!-- LAYER 1 (back): Oak — only for oak repos.
+         Oak and tree centre with `translate`, not `transform`: the sway animation sets `transform`, which would wipe out the centring -->
     <img
       v-if="plantType === 'oak'"
       :src="oakSrc"
       class="absolute bottom-0 plant-sway-slow"
-      style="left: 50%; transform: translateX(-50%); width: 100px; height: 210px; object-fit: contain;"
+      style="left: 50%; translate: -50% 0; width: 100px; height: 210px; object-fit: contain;"
     />
 
     <!-- LAYER 2: Tree — for tree + oak repos -->
@@ -133,7 +134,7 @@ const shrubStyle = computed(() => {
 
 const treeStyle = computed(() => {
   const offset = plantType.value === 'oak' ? '35%' : '50%'
-  return { left: offset, transform: 'translateX(-50%)', width: '90px', height: '190px', bottom: '10px' }
+  return { left: offset, translate: '-50% 0', width: '90px', height: '190px', bottom: '10px' }
 })
 
 // Insects hover above the tallest element in the slot
