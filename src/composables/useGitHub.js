@@ -1,16 +1,25 @@
 import { ref } from 'vue'
 
+// GitHub's own rules: 1-39 alphanumerics or single hyphens, not starting or ending with a hyphen
+const GITHUB_USERNAME = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i
+
 export function useGitHub() {
   const loading = ref(false)
   const error = ref(null)
 
   const fetchUserRepos = async (username) => {
-    loading.value = true
     error.value = null
-    
+
+    if (!GITHUB_USERNAME.test(username)) {
+      error.value = 'That is not a valid GitHub username'
+      return null
+    }
+
+    loading.value = true
+
     try {
       // Fetch user's repositories
-      const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=30`)
+      const response = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}/repos?sort=updated&per_page=30`)
       
       if (!response.ok) {
         throw new Error(response.status === 404 ? 'User not found' : 'Failed to fetch repositories')
