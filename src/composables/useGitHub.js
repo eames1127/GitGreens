@@ -22,11 +22,16 @@ const GITHUB_USERNAME = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i
 export function useGitHub() {
   const loading = ref(false)
   const error = ref(null)
+  // Replies can arrive out of order, so only the most recent search may update state
+  let latestSearch = 0
 
   const fetchUserRepos = async (username) => {
+    const search = ++latestSearch
+    const isCurrent = () => search === latestSearch
     error.value = null
 
     if (!GITHUB_USERNAME.test(username)) {
+      loading.value = false
       error.value = 'That is not a valid GitHub username'
       return null
     }
@@ -37,6 +42,9 @@ export function useGitHub() {
       const repos = []
       for (let page = 1; page <= MAX_PAGES; page++) {
         const response = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}/repos?sort=updated&per_page=${PER_PAGE}&page=${page}`)
+
+        // Stop paging for a search the user has replaced, saving rate-limited requests
+        if (!isCurrent()) return null
 
         if (!response.ok) {
           throw new Error(describeFailure(response))
@@ -50,10 +58,10 @@ export function useGitHub() {
       return repos.filter(repo => !repo.fork)
 
     } catch (err) {
-      error.value = err.message
+      if (isCurrent()) error.value = err.message
       return null
     } finally {
-      loading.value = false
+      if (isCurrent()) loading.value = false
     }
   }
 
