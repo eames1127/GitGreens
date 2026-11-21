@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { PLANT_THRESHOLDS, PLANT_CONFIG, LANGUAGE_COLORS } from '../config/plantConfig.js'
+import { PLANT_THRESHOLDS, LANGUAGE_COLORS } from '../config/plantConfig.js'
 
 const ACTIVE_WINDOW_MS = 7 * 24 * 60 * 60 * 1000
 
@@ -23,36 +23,6 @@ export function usePlantData(repo) {
     return 'oak'
   })
 
-  const config = computed(() => PLANT_CONFIG[plantType.value])
-
-  const commitCount = computed(() => 
-    Math.max(1, Math.min(50, repo.size || 1))
-  )
-
-  // Smaller sizes so plants fill their slot without looking comically huge
-  const plantHeight = computed(() => {
-    const heights = { grass: 70, shrub: 90, tree: 110, oak: 130 }
-    return heights[plantType.value] ?? 90
-  })
-
-  const plantSize = computed(() => {
-    const sizes = { grass: 60, shrub: 75, tree: 85, oak: 100 }
-    return sizes[plantType.value] ?? 75
-  })
-
-  const stemHeight = computed(() => {
-    const multiplier = config.value?.multiplier || 0.5
-    return Math.max(15, commitCount.value * multiplier)
-  })
-
-  const bloomSize = computed(() => {
-    const size = Math.max(0, Math.min(12, repo.stargazers_count * 0.5))
-    const multiplier = config.value?.bloomMultiplier || 1
-    return size * multiplier
-  })
-
-  const stemColor = computed(() => '#228B22')
-  const leafColor = computed(() => '#32CD32')
   const bloomColor = computed(() => 
     LANGUAGE_COLORS[repo.language] || '#FF69B4'
   )
@@ -73,13 +43,6 @@ export function usePlantData(repo) {
     hasOpenIssues,
     isPopular,
     plantType,
-    config,
-    plantHeight,
-    plantSize,
-    stemHeight,
-    bloomSize,
-    stemColor,
-    leafColor,
     bloomColor,
     formatDate
   }

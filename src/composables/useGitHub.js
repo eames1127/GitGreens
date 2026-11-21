@@ -47,17 +47,8 @@ export function useGitHub() {
         if (pageRepos.length < PER_PAGE) break
       }
 
-      // Filter out forks and add commit count estimation
-      const filteredRepos = repos
-        .filter(repo => !repo.fork)
-        .map(repo => ({
-          ...repo,
-          // Use repo size as commit count proxy (GitHub's size field)
-          commitCount: repo.size || 1
-        }))
-      
-      return filteredRepos
-      
+      return repos.filter(repo => !repo.fork)
+
     } catch (err) {
       error.value = err.message
       return null
@@ -66,23 +57,9 @@ export function useGitHub() {
     }
   }
 
-  const fetchRepoCommits = async (username, repoName) => {
-    try {
-      const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/commits?per_page=1`)
-      if (response.ok) {
-        const commits = await response.json()
-        return commits.length
-      }
-    } catch (err) {
-      console.warn(`Could not fetch commits for ${repoName}:`, err)
-    }
-    return 1 // Default fallback
-  }
-
   return {
     loading,
     error,
-    fetchUserRepos,
-    fetchRepoCommits
+    fetchUserRepos
   }
 }
