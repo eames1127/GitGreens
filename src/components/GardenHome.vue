@@ -66,7 +66,7 @@
 
     <!-- Garden Key -->
     <div v-if="repos.length > 0" class="max-w-2xl mx-auto mt-6">
-      <GardenKey />
+      <GardenKey :season="season" />
     </div>
   </div>
 </template>

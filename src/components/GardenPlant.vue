@@ -46,19 +46,19 @@
     <!-- Insects float above the tallest plant -->
     <img
       v-if="hasRecentActivity"
-      :src="beeSrc"
+      :src="INSECT_IMAGES.bee"
       class="absolute animate-bee pointer-events-none"
       :style="insectStyle('bee')"
     />
     <img
       v-if="hasOpenIssues"
-      :src="flySrc"
+      :src="INSECT_IMAGES.fly"
       class="absolute animate-fly pointer-events-none"
       :style="insectStyle('fly')"
     />
     <img
       v-if="isPopular"
-      :src="butterflySrc"
+      :src="INSECT_IMAGES.butterfly"
       class="absolute animate-butterfly pointer-events-none"
       :style="insectStyle('butterfly')"
     />
@@ -77,14 +77,7 @@
 import { ref, computed } from 'vue'
 import { usePlantData } from '../composables/usePlantData.js'
 import PlantTooltip from './plant/PlantTooltip.vue'
-import beeSrc from '../assets/insects/bee.svg'
-import flySrc from '../assets/insects/fly.svg'
-import butterflySrc from '../assets/insects/butterfly.svg'
-
-// Plant artwork is chosen by season at runtime, so let Vite resolve every variant up front;
-// hand-built '/src/assets/...' strings only resolve on the dev server, not in the build.
-const PLANT_IMAGES = import.meta.glob('../assets/plants/*.svg', { eager: true, query: '?url', import: 'default' })
-const plantImage = (name) => PLANT_IMAGES[`../assets/plants/${name}.svg`]
+import { plantImage, INSECT_IMAGES } from '../config/artwork.js'
 
 const props = defineProps({
   repo: { type: Object, required: true },
