@@ -88,7 +88,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import GardenPlant from './GardenPlant.vue'
 import { isRecentlyActive } from '../composables/usePlantData.js'
 import { SEASONS } from '../config/seasons.js'
@@ -104,15 +104,35 @@ defineEmits(['export'])
 const gardenRef = ref(null)
 const seasonConfig = computed(() => SEASONS[props.season] ?? SEASONS.summer)
 
+// Particle timings are tuned for the minimum garden height; taller gardens stretch them
+// so particles keep the same falling speed instead of rushing through hundreds of rows
+const BASE_GARDEN_HEIGHT = 280
+const gardenHeight = ref(BASE_GARDEN_HEIGHT)
+const fallScale = computed(() => Math.max(1, gardenHeight.value / BASE_GARDEN_HEIGHT))
+
+let resizeObserver
+onMounted(() => {
+  resizeObserver = new ResizeObserver(([entry]) => {
+    gardenHeight.value = entry.contentRect.height
+  })
+  resizeObserver.observe(gardenRef.value)
+})
+onBeforeUnmount(() => resizeObserver?.disconnect())
+
 function particleStyle(n) {
   const seed = n * 137
+  const duration = (4 + (seed % 40) / 10) * fallScale.value
   return {
     left: `${(seed * 31) % 100}%`,
     fontSize: `${12 + (seed % 10)}px`,
-    animationDelay: `${(seed % 60) / 10}s`,
-    animationDuration: `${4 + (seed % 40) / 10}s`,
+    // A negative delay starts each particle part-way through its fall, so the sky is
+    // already full on load rather than waiting for slow, scaled-up delays to elapse
+    animationDelay: `${-((seed % 60) / 60) * duration}s`,
+    animationDuration: `${duration}s`,
   }
 }
+
+
 
 const totalStars = computed(() =>
   props.repos.reduce((sum, r) => sum + r.stargazers_count, 0)
@@ -133,9 +153,13 @@ const activeRepos = computed(() => props.repos.filter(isRecentlyActive).length)
   opacity: 0;
 }
 
+/* Animate `top` rather than translateY: a percentage translate is relative to the
+   particle's own size, whereas `top` is relative to the garden, so each particle
+   falls from the sky to the ground however tall the garden grows. */
 @keyframes fall {
   0% {
-    transform: translateY(-20px) rotate(0deg);
+    top: -20px;
+    transform: rotate(0deg);
     opacity: 0;
   }
   10% {
@@ -145,8 +169,9 @@ const activeRepos = computed(() => props.repos.filter(isRecentlyActive).length)
     opacity: 0.8;
   }
   100% {
-    transform: translateY(100%) rotate(360deg);
+    top: 100%;
+    transform: rotate(360deg);
     opacity: 0;
-    }
+  }
 }
 </style>
