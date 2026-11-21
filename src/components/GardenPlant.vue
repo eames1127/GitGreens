@@ -76,7 +76,6 @@
 import { ref, computed } from 'vue'
 import { usePlantData } from '../composables/usePlantData.js'
 import PlantTooltip from './plant/PlantTooltip.vue'
-import { SEASONS } from '../config/seasons.js'
 import beeSrc from '../assets/insects/bee.svg'
 import flySrc from '../assets/insects/fly.svg'
 import butterflySrc from '../assets/insects/butterfly.svg'
@@ -94,14 +93,11 @@ const props = defineProps({
 
 const showTooltip = ref(false)
 
-const seasonConfig = computed(() => SEASONS[props.season] ?? SEASONS.summer)
-
 const {
   hasRecentActivity,
   hasOpenIssues,
   isPopular,
   plantType,
-  bloomColor,
   formatDate
 } = usePlantData(props.repo)
 

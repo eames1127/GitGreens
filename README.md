@@ -56,8 +56,8 @@ GitGreens/
 │   │   │   └── PlantTooltip.vue  # Hover tooltip
 │   │   ├── GardenCanvas.vue  # Garden container with seasonal theming
 │   │   ├── GardenKey.vue     # Visual legend
-│   │   ├── Home.vue          # Main input and layout
-│   │   └── Plant.vue         # Layered plant slot for one repo
+│   │   ├── GardenHome.vue    # Main input and layout
+│   │   └── GardenPlant.vue   # Layered plant slot for one repo
 │   ├── composables/
 │   │   ├── useGitHub.js      # GitHub API logic
 │   │   ├── usePlantData.js   # Repo → plant type and insects
