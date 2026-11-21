@@ -54,9 +54,9 @@
       {{ error || exportError }}
     </div>
 
-    <!-- Garden Canvas -->
+    <!-- Garden Canvas — also shown while loading, so its "Growing your garden..." overlay is visible -->
     <GardenCanvas 
-      v-if="repos.length > 0"
+      v-if="repos.length > 0 || loading"
       ref="gardenCanvasRef"
       :repos="repos" 
       :loading="loading"
