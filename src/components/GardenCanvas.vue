@@ -73,7 +73,7 @@
         style="padding: 0 4px 0 4px;"
       >
         <div class="flex flex-wrap items-end" style="gap: 0;">
-          <Plant
+          <GardenPlant
             v-for="(repo, index) in repos"
             :key="repo.id"
             :repo="repo"
@@ -88,7 +88,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import Plant from './Plant.vue'
+import GardenPlant from './GardenPlant.vue'
 import { isRecentlyActive } from '../composables/usePlantData.js'
 import { SEASONS } from '../config/seasons.js'
 

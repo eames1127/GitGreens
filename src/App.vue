@@ -1,14 +1,14 @@
 <template>
   <div :class="{ 'dark': isDark }" class="min-h-screen transition-colors">
     <div class="bg-gradient-to-b from-garden-sky to-garden-grass dark:from-garden-dark-sky dark:to-garden-dark-grass min-h-screen">
-      <Home />
+      <GardenHome />
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, provide } from 'vue'
-import Home from './components/Home.vue'
+import GardenHome from './components/GardenHome.vue'
 
 const isDark = ref(false)
 
