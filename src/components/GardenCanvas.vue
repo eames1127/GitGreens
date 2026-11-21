@@ -35,7 +35,7 @@
       ref="gardenRef"
       data-garden-bounds
       :class="[
-        'relative rounded-xl border-4 overflow-hidden transition-all duration-700',
+        'relative flex flex-col justify-end rounded-xl border-4 overflow-hidden transition-all duration-700',
         seasonConfig.borderClass
       ]"
       :style="{ minHeight: '280px' }"
@@ -43,10 +43,10 @@
       <!-- Sky — slim strip at top -->
       <div :class="['absolute inset-0 bg-gradient-to-b transition-all duration-700', seasonConfig.skyClass]" />
 
-      <!-- Ground — lower 60% so plants root into it -->
+      <!-- Ground fills everything below a fixed sky band, so every row of plants roots into it however tall the garden grows -->
       <div
         :class="['absolute left-0 right-0 bottom-0 transition-all duration-700 z-10', seasonConfig.groundClass]"
-        style="height: 62%;"
+        style="top: 106px;"
       />
 
       <!-- Seasonal particles -->
@@ -67,10 +67,11 @@
         </div>
       </div>
 
-      <!-- Plants — flush to bottom, no gaps, wrap naturally -->
+      <!-- Plants sit in normal flow so extra rows make the garden taller instead of spilling out of the top;
+           16px top padding keeps even a grass-only first row (90px) rooted below the 106px sky band -->
       <div
-        class="absolute left-0 right-0 bottom-0 z-20"
-        style="padding: 0 4px 0 4px;"
+        class="relative z-20"
+        style="padding: 16px 4px 0 4px;"
       >
         <div class="flex flex-wrap items-end" style="gap: 0;">
           <GardenPlant
