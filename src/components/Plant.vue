@@ -45,19 +45,19 @@
     <!-- Insects float above the tallest plant -->
     <img
       v-if="hasRecentActivity"
-      src="/src/assets/insects/bee.svg"
+      :src="beeSrc"
       class="absolute animate-bee pointer-events-none"
       :style="insectStyle('bee')"
     />
     <img
       v-if="hasOpenIssues"
-      src="/src/assets/insects/fly.svg"
+      :src="flySrc"
       class="absolute animate-fly pointer-events-none"
       :style="insectStyle('fly')"
     />
     <img
       v-if="isPopular"
-      src="/src/assets/insects/butterfly.svg"
+      :src="butterflySrc"
       class="absolute animate-butterfly pointer-events-none"
       :style="insectStyle('butterfly')"
     />
@@ -77,6 +77,14 @@ import { ref, computed } from 'vue'
 import { usePlantData } from '../composables/usePlantData.js'
 import PlantTooltip from './plant/PlantTooltip.vue'
 import { SEASONS } from '../config/seasons.js'
+import beeSrc from '../assets/insects/bee.svg'
+import flySrc from '../assets/insects/fly.svg'
+import butterflySrc from '../assets/insects/butterfly.svg'
+
+// Plant artwork is chosen by season at runtime, so let Vite resolve every variant up front;
+// hand-built '/src/assets/...' strings only resolve on the dev server, not in the build.
+const PLANT_IMAGES = import.meta.glob('../assets/plants/*.svg', { eager: true, query: '?url', import: 'default' })
+const plantImage = (name) => PLANT_IMAGES[`../assets/plants/${name}.svg`]
 
 const props = defineProps({
   repo: { type: Object, required: true },
@@ -107,13 +115,13 @@ const slotHeight = computed(() => ({ grass: 90, shrub: 150, tree: 190, oak: 210 
 const s = computed(() => props.season)
 // Use flowerless plain grass when it's underplanting beneath shrub/tree/oak
 const grassSrc = computed(() => {
-  if (plantType.value === 'grass') return `/src/assets/plants/grass-${s.value}.svg`
+  if (plantType.value === 'grass') return plantImage(`grass-${s.value}`)
   const plainSuffix = s.value === 'summer' ? '' : `-${s.value}`
-  return `/src/assets/plants/grass-plain${plainSuffix}.svg`
+  return plantImage(`grass-plain${plainSuffix}`)
 })
-const shrubSrc  = computed(() => `/src/assets/plants/shrub-${s.value}.svg`)
-const treeSrc   = computed(() => `/src/assets/plants/tree-${s.value}.svg`)
-const oakSrc    = computed(() => `/src/assets/plants/oak-${s.value}.svg`)
+const shrubSrc  = computed(() => plantImage(`shrub-${s.value}`))
+const treeSrc   = computed(() => plantImage(`tree-${s.value}`))
+const oakSrc    = computed(() => plantImage(`oak-${s.value}`))
 
 // Position each layer within the slot
 const grassStyle = computed(() => {

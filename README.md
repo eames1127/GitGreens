@@ -46,26 +46,28 @@ npm run build
 
 ```
 GitGreens/
-├── .github/
-│   └── ISSUE_TEMPLATE/
+├── docs/                     # Architecture, conventions and workflow guides
 ├── src/
+│   ├── assets/
+│   │   ├── insects/          # Bee, fly and butterfly SVGs
+│   │   └── plants/           # <type>-<season>.svg artwork for every plant type
 │   ├── components/
 │   │   ├── plant/
-│   │   │   ├── PlantSVG.vue      # Plant SVG renderer
 │   │   │   └── PlantTooltip.vue  # Hover tooltip
 │   │   ├── GardenCanvas.vue  # Garden container with seasonal theming
 │   │   ├── GardenKey.vue     # Visual legend
 │   │   ├── Home.vue          # Main input and layout
-│   │   └── Plant.vue         # Individual plant wrapper
+│   │   └── Plant.vue         # Layered plant slot for one repo
 │   ├── composables/
 │   │   ├── useGitHub.js      # GitHub API logic
-│   │   ├── usePlantData.js   # Plant appearance logic
+│   │   ├── usePlantData.js   # Repo → plant type and insects
 │   │   └── useSeason.js      # Season detection and toggle
 │   ├── config/
+│   │   ├── plantConfig.js    # Size thresholds and language colours
 │   │   └── seasons.js        # Season palettes, particles, and effects
 │   ├── App.vue               # Root component with theming
 │   ├── main.js               # Vue app entry
-│   └── style.css             # Global styles + animations
+│   └── style.css             # Global styles
 ├── .gitignore
 ├── index.html                # Entry HTML file
 ├── LICENSE
