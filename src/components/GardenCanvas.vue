@@ -88,6 +88,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import Plant from './Plant.vue'
+import { isRecentlyActive } from '../composables/usePlantData.js'
 import { SEASONS } from '../config/seasons.js'
 
 const props = defineProps({
@@ -121,10 +122,7 @@ const topLanguage = computed(() => {
   }, {})
   return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'
 })
-const activeRepos = computed(() => {
-  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  return props.repos.filter(r => new Date(r.pushed_at) > weekAgo).length
-})
+const activeRepos = computed(() => props.repos.filter(isRecentlyActive).length)
 </script>
 
 <style scoped>
