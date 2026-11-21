@@ -29,10 +29,10 @@ GardenHome.vue ── useGitHub().fetchUserRepos(username)
         ├─ sky / ground / particles from SEASONS[season]
         └─ GardenPlant.vue × N (props: repo, delay, season)
              ├─ usePlantData(repo) → plantType, insect flags
-             ├─ layered <img> SVGs from src/assets/plants/<type>-<season>.svg
-             ├─ insect <img> SVGs from src/assets/insects/
+             ├─ layered <img> plant SVGs (<type>-<season>.svg) via config/artwork.js
+             ├─ insect <img> SVGs via config/artwork.js
              └─ plant/PlantTooltip.vue — keeps itself inside the garden's edges
-GardenKey.vue — static legend
+GardenKey.vue (props: season) — legend showing the same seasonal artwork via config/artwork.js
 App.vue — dark/light theme, shared via provide('theme') / inject('theme')
 ```
 
@@ -47,7 +47,8 @@ App.vue — dark/light theme, shared via provide('theme') / inject('theme')
 | Season palette & effects | `src/config/seasons.js` (`SEASONS`, `detectSeason`) | Adding a season = add a key here + matching SVG assets |
 | Plant thresholds, language colours | `src/config/plantConfig.js` | |
 | Layout and rendering | `src/components/` | Component names are multi-word (`GardenPlant`); sub-parts go in a subfolder named after the parent (`plant/`) |
-| Artwork | `src/assets/plants`, `src/assets/insects` | One SVG per plant type per season; import or `import.meta.glob` them, never hand-build `/src/...` URLs |
+| Artwork files | `src/assets/plants`, `src/assets/insects` | One SVG per plant type per season |
+| Artwork lookup | `src/config/artwork.js` (`plantImage`, `INSECT_IMAGES`) | The only place that resolves artwork; components never import SVGs or hand-build `/src/...` URLs, so the garden and key always match |
 | Global CSS | `src/style.css` | Tailwind layers only; component animations stay in `<style scoped>` |
 | Unit tests | `*.test.js` next to the file they test | Mock `fetch`; never call the real GitHub API |
 | CI | `.github/workflows/`, `.github/dependabot.yml` | See [workflow.md](workflow.md#checks) |
@@ -61,6 +62,11 @@ padding so even a grass-only first row stands below the sky.
 
 The garden element carries `data-garden-bounds` and clips its contents. Anything that pops
 out of a plant (the tooltip) measures itself against that element and moves back inside.
+
+Seasonal particles fall by animating `top` from just above the garden to 100% of its height
+(a percentage `translateY` would be relative to the particle, not the garden). A
+`ResizeObserver` stretches their durations with the garden height so they fall at the same
+speed in any size of garden, and negative delays start them part-way through their fall.
 
 ## Plant rendering model
 
