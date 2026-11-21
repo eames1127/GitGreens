@@ -33,6 +33,7 @@
     <!-- Garden -->
     <div
       ref="gardenRef"
+      data-garden-bounds
       :class="[
         'relative rounded-xl border-4 overflow-hidden transition-all duration-700',
         seasonConfig.borderClass
