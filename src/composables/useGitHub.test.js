@@ -69,3 +69,68 @@ describe('useGitHub().fetchUserRepos', () => {
     expect(loading.value).toBe(false)
   })
 })
+
+describe('overlapping searches', () => {
+  let fetchMock
+
+  beforeEach(() => {
+    fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+  })
+  afterEach(() => vi.unstubAllGlobals())
+
+  // Resolve fetches by hand so a slow first search can finish after a fast second one
+  const deferred = () => {
+    let resolve
+    const promise = new Promise(r => { resolve = r })
+    return { promise, resolve }
+  }
+
+  it('ignores an earlier search that finishes after a later one', async () => {
+    const slow = deferred()
+    fetchMock
+      .mockImplementationOnce(() => slow.promise)
+      .mockResolvedValueOnce(ok([repo(2)]))
+    const { fetchUserRepos, loading } = useGitHub()
+
+    const first = fetchUserRepos('alice')
+    const second = await fetchUserRepos('bob')
+    slow.resolve(ok([repo(1)]))
+
+    expect(second.map(r => r.id)).toEqual([2])
+    expect(await first).toBeNull()
+    expect(loading.value).toBe(false)
+  })
+
+  it('does not show an error from a superseded search', async () => {
+    const slow = deferred()
+    fetchMock
+      .mockImplementationOnce(() => slow.promise)
+      .mockResolvedValueOnce(ok([repo(2)]))
+    const { fetchUserRepos, error } = useGitHub()
+
+    const first = fetchUserRepos('alice')
+    await fetchUserRepos('bob')
+    slow.resolve(fail(404))
+    await first
+
+    expect(error.value).toBeNull()
+  })
+
+  it('stays loading until the latest search finishes', async () => {
+    const slowSecond = deferred()
+    fetchMock
+      .mockResolvedValueOnce(ok([repo(1)]))
+      .mockImplementationOnce(() => slowSecond.promise)
+    const { fetchUserRepos, loading } = useGitHub()
+
+    const first = fetchUserRepos('alice')
+    const second = fetchUserRepos('bob')
+    await first
+    expect(loading.value).toBe(true)
+
+    slowSecond.resolve(ok([repo(2)]))
+    await second
+    expect(loading.value).toBe(false)
+  })
+})
