@@ -133,9 +133,13 @@ const activeRepos = computed(() => props.repos.filter(isRecentlyActive).length)
   opacity: 0;
 }
 
+/* Animate `top` rather than translateY: a percentage translate is relative to the
+   particle's own size, whereas `top` is relative to the garden, so each particle
+   falls from the sky to the ground however tall the garden grows. */
 @keyframes fall {
   0% {
-    transform: translateY(-20px) rotate(0deg);
+    top: -20px;
+    transform: rotate(0deg);
     opacity: 0;
   }
   10% {
@@ -145,8 +149,9 @@ const activeRepos = computed(() => props.repos.filter(isRecentlyActive).length)
     opacity: 0.8;
   }
   100% {
-    transform: translateY(100%) rotate(360deg);
+    top: 100%;
+    transform: rotate(360deg);
     opacity: 0;
-    }
+  }
 }
 </style>
