@@ -1,7 +1,7 @@
 <template>
   <div class="relative">
-    <!-- Garden Stats -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+    <!-- Garden Stats — hidden while loading so they never show an empty garden's zeros -->
+    <div v-if="!loading" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
       <div class="bg-white/10 rounded-xl px-4 py-3 text-center text-white">
         <div class="text-2xl font-bold">{{ repos.length }}</div>
         <div class="text-xs opacity-70 mt-1">🌿 Repos</div>
@@ -21,7 +21,7 @@
     </div>
 
     <!-- Export Button -->
-    <div class="text-center mb-4">
+    <div v-if="!loading" class="text-center mb-4">
       <button
         @click="$emit('export')"
         class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors"
