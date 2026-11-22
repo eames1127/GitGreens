@@ -59,7 +59,7 @@ GitGreens/
 │   │   ├── plant/
 │   │   │   └── PlantTooltip.vue  # Hover tooltip
 │   │   ├── GardenCanvas.vue  # Garden container with seasonal theming
-│   │   ├── GardenKey.vue     # Visual legend
+│   │   ├── GardenKey.vue     # Legend using the garden's seasonal artwork
 │   │   ├── GardenHome.vue    # Main input and layout
 │   │   └── GardenPlant.vue   # Layered plant slot for one repo
 │   ├── composables/
@@ -67,6 +67,7 @@ GitGreens/
 │   │   ├── usePlantData.js   # Repo → plant type and insects
 │   │   └── useSeason.js      # Season detection and toggle
 │   ├── config/
+│   │   ├── artwork.js        # Resolves plant and insect SVGs for garden and key
 │   │   ├── plantConfig.js    # Size thresholds and language colours
 │   │   └── seasons.js        # Season palettes, particles, and effects
 │   ├── App.vue               # Root component with theming
