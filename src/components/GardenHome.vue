@@ -88,15 +88,20 @@ const username = ref('')
 const repos = ref([])
 const gardenCanvasRef = ref(null)
 const exportError = ref(null)
+// The input can be edited after a garden grows, so remember whose garden is on screen.
+// It has passed useGitHub's username check, so it is safe to use in a filename.
+const gardenOwner = ref('')
 
 const growGarden = async () => {
-  if (!username.value.trim()) return
-  
+  const name = username.value.trim()
+  if (!name) return
+
   exportError.value = null
   repos.value = []
-  const data = await fetchUserRepos(username.value.trim())
+  const data = await fetchUserRepos(name)
   if (data) {
     repos.value = data
+    gardenOwner.value = name
   }
 }
 
@@ -111,7 +116,7 @@ const exportGarden = async () => {
     })
     
     const link = document.createElement('a')
-    link.download = `${username.value}-garden.png`
+    link.download = `${gardenOwner.value}-garden.png`
     link.href = dataUrl
     link.click()
   } catch (err) {
