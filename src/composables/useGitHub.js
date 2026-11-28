@@ -51,6 +51,8 @@ export function useGitHub() {
         }
 
         const pageRepos = await response.json()
+        // Reading the body is a second wait, during which the user may have searched again
+        if (!isCurrent()) return null
         repos.push(...pageRepos)
         if (pageRepos.length < PER_PAGE) break
       }
