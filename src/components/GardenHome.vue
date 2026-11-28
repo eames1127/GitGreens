@@ -54,6 +54,11 @@
       {{ error || exportError }}
     </div>
 
+    <!-- Empty garden — a found user with no repos of their own would otherwise leave the page blank -->
+    <div v-if="emptyGardenFor" class="max-w-md mx-auto mb-4 p-4 bg-white/10 border border-white/30 rounded-lg text-white text-center">
+      🌾 {{ emptyGardenFor }} has no public repositories of their own yet, so there is nothing to grow.
+    </div>
+
     <!-- Garden Canvas — also shown while loading, so its "Growing your garden..." overlay is visible -->
     <GardenCanvas 
       v-if="repos.length > 0 || loading"
@@ -91,17 +96,21 @@ const exportError = ref(null)
 // The input can be edited after a garden grows, so remember whose garden is on screen.
 // It has passed useGitHub's username check, so it is safe to use in a filename.
 const gardenOwner = ref('')
+// Forks are dropped, so this also covers users who only have forks
+const emptyGardenFor = ref(null)
 
 const growGarden = async () => {
   const name = username.value.trim()
   if (!name) return
 
   exportError.value = null
+  emptyGardenFor.value = null
   repos.value = []
   const data = await fetchUserRepos(name)
   if (data) {
     repos.value = data
     gardenOwner.value = name
+    if (data.length === 0) emptyGardenFor.value = name
   }
 }
 
