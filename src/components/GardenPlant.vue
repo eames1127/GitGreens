@@ -1,7 +1,9 @@
 <template>
+  <!-- The grow animation leaves a transform on every plant, so each is its own stacking layer and
+       later plants paint over an earlier plant's tooltip; lift the hovered plant above its neighbours -->
   <div
-    class="relative group cursor-pointer opacity-0 animate-grow flex items-end"
-    :style="{ 
+    :class="['relative group cursor-pointer opacity-0 animate-grow flex items-end', { 'z-10': showTooltip }]"
+    :style="{
       animationDelay: `${delay}ms`,
       width: `${slotWidth}px`,
       height: `${slotHeight}px`
