@@ -117,6 +117,20 @@ describe('overlapping searches', () => {
     expect(error.value).toBeNull()
   })
 
+  it('ignores an earlier search whose body is still being read when a later one starts', async () => {
+    const slowBody = deferred()
+    fetchMock.mockResolvedValueOnce({ ...ok([]), json: () => slowBody.promise })
+    const { fetchUserRepos, error } = useGitHub()
+
+    const first = fetchUserRepos('alice')
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1))
+    await fetchUserRepos('not--valid')
+    slowBody.resolve([repo(1)])
+
+    expect(await first).toBeNull()
+    expect(error.value).toBe('That is not a valid GitHub username')
+  })
+
   it('stays loading until the latest search finishes', async () => {
     const slowSecond = deferred()
     fetchMock
