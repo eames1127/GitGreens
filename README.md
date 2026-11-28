@@ -51,6 +51,8 @@ npm test
 ```
 GitGreens/
 ├── docs/                     # Architecture, conventions and workflow guides
+├── public/
+│   └── favicon.svg           # Seedling tab icon, served as-is
 ├── src/
 │   ├── assets/
 │   │   ├── insects/          # Bee, fly and butterfly SVGs
