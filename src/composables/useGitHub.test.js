@@ -68,6 +68,14 @@ describe('useGitHub().fetchUserRepos', () => {
     expect(error.value).toBe('Failed to fetch repositories')
     expect(loading.value).toBe(false)
   })
+
+  it('explains when GitHub cannot be reached instead of showing the browser error', async () => {
+    fetchMock.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+    const { fetchUserRepos, error, loading } = useGitHub()
+    expect(await fetchUserRepos('octocat')).toBeNull()
+    expect(error.value).toBe('Could not reach GitHub, please check your connection and try again')
+    expect(loading.value).toBe(false)
+  })
 })
 
 describe('overlapping searches', () => {

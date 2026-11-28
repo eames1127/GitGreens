@@ -16,6 +16,16 @@ function describeFailure(response) {
   return 'Failed to fetch repositories'
 }
 
+// fetch only rejects when no reply arrived (offline, DNS, blocked by an extension), and the
+// browser's own wording for that ("Failed to fetch", "NetworkError...") means nothing to users
+async function fetchFromGitHub(url) {
+  try {
+    return await fetch(url)
+  } catch (err) {
+    throw new Error('Could not reach GitHub, please check your connection and try again', { cause: err })
+  }
+}
+
 // GitHub's own rules: 1-39 alphanumerics or single hyphens, not starting or ending with a hyphen
 const GITHUB_USERNAME = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i
 
@@ -41,7 +51,7 @@ export function useGitHub() {
     try {
       const repos = []
       for (let page = 1; page <= MAX_PAGES; page++) {
-        const response = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}/repos?sort=updated&per_page=${PER_PAGE}&page=${page}`)
+        const response = await fetchFromGitHub(`https://api.github.com/users/${encodeURIComponent(username)}/repos?sort=updated&per_page=${PER_PAGE}&page=${page}`)
 
         // Stop paging for a search the user has replaced, saving rate-limited requests
         if (!isCurrent()) return null
